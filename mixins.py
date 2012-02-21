@@ -2,13 +2,16 @@ from django.db import models
 from django.utils.translation import get_language_info, ugettext_lazy as _
 
 
-class ActivityMixin(object):
+class ActivityMixin(models.Model):
     '''Mixin contains active field
     '''
     active = models.BooleanField(verbose_name=_('Is active'), default=True)
 
+    class Meta:
+        abstract = True
 
-class HTMLMetaMixin(object):
+
+class HTMLMetaMixin(models.Model):
     '''Mixin contains fields can be used to generate html meta tags and some
     other html > head tags
 
@@ -23,6 +26,9 @@ class HTMLMetaMixin(object):
     meta_keywords = models.TextField(verbose_name=_('Keywords'), blank=True,
                                      help_text=_('Tag meta keywords'))
 
+    class Meta:
+        abstract = True
+
 
 class Language(models.Model):
     '''Model represents language
@@ -36,20 +42,28 @@ class Language(models.Model):
     def __str__(self):
         '''Get language name for it's code
         '''
-        return get_language_info(self.code)['name']
+        return self.name
 
     def __unicode__(self):
         '''Get language name for it's code
         '''
-        return self.__str__()
+        return self.name
 
     def __repr__(self):
         '''Represent
         '''
         return ''.join(('<', self.__class__.__name__, ': "', self.code, '">'))
 
+    @property
+    def info(self):
+        return get_language_info(self.code)
 
-class NavigationMixin(object):
+    @property
+    def name(self):
+        return self.info['name']
+
+
+class NavigationMixin(models.Model):
     '''
     '''
     alias = models.SlugField(verbose_name=_('Alias'), unique=False,
@@ -57,8 +71,11 @@ class NavigationMixin(object):
     header = models.CharField(max_length=255, verbose_name=_('Header'),
                               blank=True, help_text=_('H1 page tag'))
 
+    class Meta:
+        abstract = True
 
-class TranslatedMixin(object):
+
+class TranslatedMixin(models.Model):
     '''Mixin adds method to select object translation for specified language
     from translations_set field (required to be set). Can be used to make
     objects translated to different languages.
@@ -80,6 +97,10 @@ class TranslatedMixin(object):
         translation = article.get_translation('en')
         
     '''
+
+    class Meta:
+        abstract = True
+
     def get_translation(self, language):
         if isinstance(language, basestring):
             return self.translations_set.get(language_id=language)
@@ -90,7 +111,10 @@ class TranslatedMixin(object):
                                                    type(language)))
 
 
-class TranslationMixin(object):
+class TranslationMixin(models.Model):
     '''Mixin contains field related to language.
     '''
     language = models.ForeignKey(Language, verbose_name=_('Language'))
+
+    class Meta:
+        abstract = True
