@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-03 14:35+0200\n"
+"POT-Creation-Date: 2012-03-03 19:18+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,38 +18,38 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: mixins.py:8
-msgid "Is active"
+msgid "is active"
 msgstr ""
 
 #: mixins.py:22
-msgid "Title"
+msgid "title"
 msgstr ""
 
 #: mixins.py:23
-msgid "The title tag"
+msgid "the title tag"
 msgstr ""
 
 #: mixins.py:24
-msgid "Description"
+msgid "description"
 msgstr ""
 
 #: mixins.py:25
-msgid "Tag meta description"
+msgid "tag meta description"
 msgstr ""
 
 #: mixins.py:26
-msgid "Keywords"
+msgid "keywords"
 msgstr ""
 
 #: mixins.py:27
-msgid "Tag meta keywords"
+msgid "tag meta keywords"
 msgstr ""
 
 #: mixins.py:36
-msgid "Language code"
+msgid "language code"
 msgstr ""
 
-#: mixins.py:39
+#: mixins.py:39 mixins.py:122
 msgid "language"
 msgstr ""
 
@@ -58,7 +58,7 @@ msgid "languages"
 msgstr ""
 
 #: mixins.py:73
-msgid "Alias"
+msgid "alias"
 msgstr ""
 
 #: mixins.py:74
@@ -66,7 +66,7 @@ msgid "URL string alias (slug)"
 msgstr ""
 
 #: mixins.py:75
-msgid "Header"
+msgid "header"
 msgstr ""
 
 #: mixins.py:76
@@ -74,15 +74,11 @@ msgid "H1 page tag"
 msgstr ""
 
 #: mixins.py:77
-msgid "Title attr"
+msgid "title attr"
 msgstr ""
 
 #: mixins.py:78
-msgid "The title tag attr"
-msgstr ""
-
-#: mixins.py:122
-msgid "Language"
+msgid "the title tag attr"
 msgstr ""
 
 #: models.py:15 models.py:24

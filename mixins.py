@@ -5,7 +5,7 @@ from django.utils.translation import get_language_info, ugettext_lazy as _
 class ActivityMixin(models.Model):
     '''Mixin contains active field
     '''
-    active = models.BooleanField(verbose_name=_('Is active'), default=True)
+    active = models.BooleanField(verbose_name=_('is active'), default=True)
 
     class Meta:
         abstract = True
@@ -19,12 +19,12 @@ class HTMLMetaMixin(models.Model):
         meta_description - <meta name="description" content="..." />
         meta_keywords - <meta name="keywords" content="..." />
     '''
-    title_tag = models.CharField(max_length=255, verbose_name=_('Title'),
-                                 blank=True, help_text=_('The title tag'))
-    meta_description = models.TextField(verbose_name=_('Description'),
-                             blank=True, help_text=_('Tag meta description'))
-    meta_keywords = models.TextField(verbose_name=_('Keywords'), blank=True,
-                                     help_text=_('Tag meta keywords'))
+    title_tag = models.CharField(max_length=255, verbose_name=_('title'),
+                                 blank=True, help_text=_('the title tag'))
+    meta_description = models.TextField(verbose_name=_('description'),
+                             blank=True, help_text=_('tag meta description'))
+    meta_keywords = models.TextField(verbose_name=_('keywords'), blank=True,
+                                     help_text=_('tag meta keywords'))
 
     class Meta:
         abstract = True
@@ -33,7 +33,7 @@ class HTMLMetaMixin(models.Model):
 class Language(models.Model):
     '''Model represents language
     '''
-    code = models.CharField(_('Language code'), max_length=5, primary_key=True)
+    code = models.CharField(_('language code'), max_length=5, primary_key=True)
 
     class Meta:
         verbose_name = _('language')
@@ -70,12 +70,12 @@ class NavigationMixin(models.Model):
         header - content for h1 tag reprenenting the page and menu <a> tag text
         title - menu tag <a> title attribute
     '''
-    alias = models.SlugField(verbose_name=_('Alias'), unique=False,
+    alias = models.SlugField(verbose_name=_('alias'), unique=False,
                              help_text=_('URL string alias (slug)'))
-    header = models.CharField(max_length=255, verbose_name=_('Header'),
+    header = models.CharField(max_length=255, verbose_name=_('header'),
                               blank=True, help_text=_('H1 page tag'))
-    title = models.CharField(max_length=255, verbose_name=_('Title attr'),
-                             blank=True, help_text=_('The title tag attr'))
+    title = models.CharField(max_length=255, verbose_name=_('title attr'),
+                             blank=True, help_text=_('the title tag attr'))
 
     class Meta:
         abstract = True
@@ -119,7 +119,7 @@ class TranslatedMixin(models.Model):
 class TranslationMixin(models.Model):
     '''Mixin contains field related to language.
     '''
-    language = models.ForeignKey(Language, verbose_name=_('Language'))
+    language = models.ForeignKey(Language, verbose_name=_('language'))
 
     class Meta:
         abstract = True

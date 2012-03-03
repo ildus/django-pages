@@ -8,117 +8,113 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-03 14:35+0200\n"
+"POT-Creation-Date: 2012-03-03 19:18+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
-"10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
 
 #: mixins.py:8
-msgid "Is active"
-msgstr ""
+msgid "is active"
+msgstr "активен"
 
 #: mixins.py:22
-msgid "Title"
-msgstr ""
+msgid "title"
+msgstr "название"
 
 #: mixins.py:23
-msgid "The title tag"
-msgstr ""
+msgid "the title tag"
+msgstr "тег title"
 
 #: mixins.py:24
-msgid "Description"
-msgstr ""
+msgid "description"
+msgstr "описание"
 
 #: mixins.py:25
-msgid "Tag meta description"
-msgstr ""
+msgid "tag meta description"
+msgstr "мета-тег description"
 
 #: mixins.py:26
-msgid "Keywords"
-msgstr ""
+msgid "keywords"
+msgstr "ключевые слова"
 
 #: mixins.py:27
-msgid "Tag meta keywords"
-msgstr ""
+msgid "tag meta keywords"
+msgstr "мета-тег keywords"
 
 #: mixins.py:36
-msgid "Language code"
-msgstr ""
+msgid "language code"
+msgstr "код языка"
 
-#: mixins.py:39
+#: mixins.py:39 mixins.py:122
 msgid "language"
-msgstr ""
+msgstr "язык"
 
 #: mixins.py:40
 msgid "languages"
-msgstr ""
+msgstr "языки"
 
 #: mixins.py:73
-msgid "Alias"
-msgstr ""
+msgid "alias"
+msgstr "алиас"
 
 #: mixins.py:74
 msgid "URL string alias (slug)"
-msgstr ""
+msgstr "идентификатов в url"
 
 #: mixins.py:75
-msgid "Header"
-msgstr ""
+msgid "header"
+msgstr "заголовок"
 
 #: mixins.py:76
 msgid "H1 page tag"
 msgstr ""
 
 #: mixins.py:77
-msgid "Title attr"
-msgstr ""
+msgid "title attr"
+msgstr "атрибут title"
 
 #: mixins.py:78
-msgid "The title tag attr"
-msgstr ""
-
-#: mixins.py:122
-msgid "Language"
-msgstr ""
+msgid "the title tag attr"
+msgstr "атрибут тега title"
 
 #: models.py:15 models.py:24
 msgid "page"
-msgstr ""
+msgstr "страница"
 
 #: models.py:16
 msgid "pages"
-msgstr ""
+msgstr "страниц"
 
 #: models.py:26
 msgid "page content type"
-msgstr ""
+msgstr "тип содержимого страницы"
 
 #: models.py:29
 msgid "page translation"
-msgstr ""
+msgstr "перевод страницы"
 
 #: models.py:30
 msgid "pages translations"
-msgstr ""
+msgstr "переводы страниц"
 
 #: models.py:46
 msgid "page text"
-msgstr ""
+msgstr "текст на странице"
 
 #: models.py:46
 msgid "page html content"
-msgstr ""
+msgstr "html-содержимое страницы"
 
 #: models.py:49
 msgid "page article"
-msgstr ""
+msgstr "статья"
 
 #: models.py:50
 msgid "page articles"
-msgstr ""
+msgstr "статьи"
