@@ -15,12 +15,12 @@ class HTMLMetaMixin(models.Model):
     '''Mixin contains fields can be used to generate html meta tags and some
     other html > head tags
 
-        title - <title> tag
+        title_tag - <title> tag
         meta_description - <meta name="description" content="..." />
         meta_keywords - <meta name="keywords" content="..." />
     '''
-    title = models.CharField(max_length=255, verbose_name=_('Title'),
-                             blank=True, help_text=_('The title tag'))
+    title_tag = models.CharField(max_length=255, verbose_name=_('Title'),
+                                 blank=True, help_text=_('The title tag'))
     meta_description = models.TextField(verbose_name=_('Description'),
                              blank=True, help_text=_('Tag meta description'))
     meta_keywords = models.TextField(verbose_name=_('Keywords'), blank=True,
@@ -64,12 +64,18 @@ class Language(models.Model):
 
 
 class NavigationMixin(models.Model):
-    '''
+    '''Mixin contains data for navigation generation
+
+        alias - unique object identifier for current language
+        header - content for h1 tag reprenenting the page and menu <a> tag text
+        title - menu tag <a> title attribute
     '''
     alias = models.SlugField(verbose_name=_('Alias'), unique=False,
                              help_text=_('URL string alias (slug)'))
     header = models.CharField(max_length=255, verbose_name=_('Header'),
                               blank=True, help_text=_('H1 page tag'))
+    title = models.CharField(max_length=255, verbose_name=_('Title attr'),
+                             blank=True, help_text=_('The title tag attr'))
 
     class Meta:
         abstract = True
