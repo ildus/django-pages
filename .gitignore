@@ -4,3 +4,4 @@
 *.js~
 *.css~
 *.swp
+migrations/
