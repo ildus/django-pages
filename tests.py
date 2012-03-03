@@ -15,7 +15,7 @@ class Article(TranslatedMixin):
 class ArticleTranslation(TranslationMixin):
     title = models.CharField(max_length=255)
     content = models.TextField()
-    article = models.ForeignKey(Article, related_name='translations_set')
+    article = models.ForeignKey(Article, related_name='translations')
 
 
 class TranslationMixinTest(TestCase):

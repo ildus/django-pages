@@ -83,8 +83,8 @@ class NavigationMixin(models.Model):
 
 class TranslatedMixin(models.Model):
     '''Mixin adds method to select object translation for specified language
-    from translations_set field (required to be set). Can be used to make
-    objects translated to different languages.
+    from translations field (required to be set). Can be used to make objects
+    translated to different languages.
 
     As example for classes:
 
@@ -94,8 +94,7 @@ class TranslatedMixin(models.Model):
         class ArticleTranslation(TranslationMixin, models.Model):
             title = models.CharField(max_length=255)
             content = models.TextField()
-            article = models.ForeignKey(Article,
-                                        related_name='translations_set')
+            article = models.ForeignKey(Article, elated_name='translations')
 
     We can get translation:
 
@@ -109,9 +108,9 @@ class TranslatedMixin(models.Model):
 
     def get_translation(self, language):
         if isinstance(language, basestring):
-            return self.translations_set.get(language_id=language)
+            return self.translations.get(language_id=language)
         elif isinstance(language, Language):
-            return self.translations_set.get(language=language)
+            return self.translations.get(language=language)
         raise TypeError('%s.get_translation() accepts only string or Language '
                         'argument but %s given' % (self.__class__.__name__,
                                                    type(language)))
