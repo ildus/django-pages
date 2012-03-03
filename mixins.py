@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 from django.utils.translation import get_language_info, ugettext_lazy as _
 
@@ -33,7 +34,8 @@ class HTMLMetaMixin(models.Model):
 class Language(models.Model):
     '''Model represents language
     '''
-    code = models.CharField(_('Language code'), max_length=5, primary_key=True)
+    code = models.CharField(_('Language code'), max_length=5, primary_key=True,
+                            choices=settings.LANGUAGES)
 
     class Meta:
         verbose_name = _('language')
@@ -61,6 +63,10 @@ class Language(models.Model):
     @property
     def name(self):
         return self.info['name']
+
+    @property
+    def raw_code(self):
+        return self.code
 
 
 class NavigationMixin(models.Model):
