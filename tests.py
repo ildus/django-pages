@@ -2,20 +2,10 @@
 
 TODO: split test into different files to make it easier to understand and modify
 """
-from django.db import models
 from django.test import TestCase
 
-from .mixins import Language, TranslatedMixin, TranslationMixin
-
-
-class Article(TranslatedMixin):
-    name = models.CharField(max_length=255)
-
-
-class ArticleTranslation(TranslationMixin):
-    title = models.CharField(max_length=255)
-    content = models.TextField()
-    article = models.ForeignKey(Article, related_name='translations')
+import mixins
+import models
 
 
 class TranslationMixinTest(TestCase):
@@ -25,7 +15,7 @@ class TranslationMixinTest(TestCase):
     def test_language(self):
         '''Create new language and check it's properties
         '''
-        english = Language.objects.create(code='en')
+        english = mixins.Language.objects.create(code='en')
         self.assertEqual(english.code, 'en')
         self.assertEqual(repr(english), '<Language: "en">')
         self.assertEqual(str(english), 'English')
@@ -37,20 +27,18 @@ class TranslationMixinTest(TestCase):
     def test_get_translation(self):
         """Test get_translation() method from TranslatedMixin class
         """
-        english = Language.objects.create(code='en')
-        russian = Language.objects.create(code='ru')
-        article = Article.objects.create(name='Hello, world!')
-        ArticleTranslation.objects.create(article=article, title='Hello, USA',
-                                        content='US English', language=english)
-        ArticleTranslation.objects.create(article=article, content='Russian',
-                                    title='Hello, Russia', language=russian)
-        translatation = article.get_translation(english)
+        english = mixins.Language.objects.create(code='en')
+        russian = mixins.Language.objects.create(code='ru')
+        page = models.Page.objects.create()
+        models.PageTranslation.objects.create(page=page, title='Hello, USA',
+                                              language=english)
+        models.PageTranslation.objects.create(page=page, title='Hello, Russia',
+                                              language=russian)
+        translatation = page.get_translation(english)
         self.assertEqual(translatation.language, english)
-        self.assertEqual(translatation.article, article)
-        self.assertEqual(translatation.content, 'US English')
+        self.assertEqual(translatation.page, page)
         self.assertEqual(translatation.title, 'Hello, USA')
-        translatation = article.get_translation(russian.code)
+        translatation = page.get_translation(russian.code)
         self.assertEqual(translatation.language, russian)
-        self.assertEqual(translatation.article, article)
-        self.assertEqual(translatation.content, 'Russian')
+        self.assertEqual(translatation.page, page)
         self.assertEqual(translatation.title, 'Hello, Russia')

@@ -56,6 +56,11 @@ class Language(models.Model):
         '''
         return ''.join(('<', self.__class__.__name__, ': "', self.code, '">'))
 
+    def __eq__(self, other):
+        '''Override checking for equels - the same objects has the same code
+        '''
+        return self.code == other.code
+
     @property
     def info(self):
         return get_language_info(self.code)
