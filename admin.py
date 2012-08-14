@@ -1,12 +1,20 @@
 from django.contrib import admin
 
-from models import Language
+import models
 
 
 class LanguageAdmin(admin.ModelAdmin):
     '''Class represents admin interface for language model
     '''
-    model = Language
+    model = models.Language
     list_display = ('name', 'raw_code', )
 
-admin.site.register(Language, LanguageAdmin)
+admin.site.register(models.Language, LanguageAdmin)
+
+
+class PageAdmin(admin.ModelAdmin):
+    '''Class represents admin interface for page model
+    '''
+    model = models.Page
+
+admin.site.register(models.Page, PageAdmin)

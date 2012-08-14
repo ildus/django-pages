@@ -6,7 +6,7 @@ from django.utils.translation import get_language_info, ugettext_lazy as _
 class ActivityMixin(models.Model):
     '''Mixin contains active field
     '''
-    active = models.BooleanField(verbose_name=_('is active'), default=True)
+    is_active = models.BooleanField(verbose_name=_('is active'), default=True)
 
     class Meta:
         abstract = True
@@ -106,7 +106,6 @@ class TranslatedMixin(models.Model):
 
         article = Artcile.objects.get(name='Hello, world!')
         translation = article.get_translation('en')
-        
     '''
 
     class Meta:
