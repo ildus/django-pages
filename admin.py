@@ -4,7 +4,7 @@ from django.contrib import admin
 from django.core import exceptions, urlresolvers
 from django.db import transaction
 from django.views.decorators import csrf
-from django.utils import decorators, encoding, html
+from django.utils import decorators, encoding, functional, html
 from django.utils.translation import ugettext as _
 
 import forms
@@ -27,6 +27,9 @@ class LayoutAdmin(admin.ModelAdmin):
     '''
     model = models.Layout
     list_display = ('name', 'template', 'is_default', 'is_active', )
+    fields = ('name', 'template', 'is_default', 'is_active', )
+
+admin.site.register(models.Layout, LayoutAdmin)
 
 
 class PageAdmin(admin.ModelAdmin):
@@ -36,19 +39,19 @@ class PageAdmin(admin.ModelAdmin):
     add_form_template = 'admin/page_change_form.html'
     change_form_template = 'admin/page_change_form.html'
 
-    def get_lang_codes(self):
-        '''Cache the language codes
+    @functional.cached_property
+    def default_layout(self):
+        '''Get default layout
         '''
-        if not hasattr(self, '_lang_codes'):
-            self._lang_codes = models.Language.objects.all().values_list(
-                                                            'code', flat=True)
-        return self._lang_codes
+        return models.Layout.objects.get_default()
 
-    def get_translation_forms(self):
+    def get_translation_forms(self, request):
         '''Get a list of forms for different languages
         '''
-        return [forms.PageTranslationForm({'language_code': code})
-                for code in self.get_lang_codes()]
+        return [forms.PageTranslationForm(request.POST, language=language,
+                                initial={'is_active': True,
+                                        'layout__id': self.default_layout.id})
+                for language in models.Language.objects.all()]
 
     @csrf_protect_m
     @transaction.commit_on_success
@@ -61,7 +64,7 @@ class PageAdmin(admin.ModelAdmin):
             raise exceptions.PermissionDenied
 
         ModelForm = self.get_form(request)
-        translations = self.get_translation_forms()
+        translations = self.get_translation_forms(request)
         if request.method == 'POST':
             # Trying to send new post
             form = ModelForm(request.POST, request.FILES)

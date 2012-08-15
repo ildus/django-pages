@@ -5,13 +5,44 @@
 
 {% block field_sets %}
 {% for fieldset in adminform %}
-  {% include "admin/includes/fieldset.html" %}
+	{% include "admin/includes/fieldset.html" %}
 {% endfor %}
+{% if translations|length > 1 %}
 	<div id="translations">
 	{% for translation in translations %}
-		<fieldset class="module aligned">
-			{{ translation }}
+		<a href="#trans_{{ translation.language.code }}" data-trans-id="{{ translation.language.code }}">{{ translation.language.name }}</a>
+	{% endfor %}
+	</div>
+	<div id="translation_forms">
+	{% for translation in translations %}
+		<fieldset class="tab aligned" id="trans_{{ translation.language.code }}" {% if not forloop.first %}style="display: none;"{% endif %}>
+			<h2>Метаданные</h2>
+			{% for field in translation %}
+			<div class="form-row field-{{ field.name }}">
+				<div>
+					{{ field.label_tag }}
+					{{ field }}
+					{% if field.help_text %}<p class="help">{{ field.help_text }}</p>{% endif %}
+				</div>
+			</div>
+			{% endfor %}
 		</fieldset>
 	{% endfor %}
 	</div>
+{% else %}
+	{% with translation=translations|first %}
+	<fieldset class="module aligned">
+		<h2>Метаданные</h2>
+		{% for field in translations %}
+		<div class="form-row field-{{ field.name }}">
+			<div>
+				{{ field.label_tag }}
+				{{ field }}
+				{% if field.help_text %}<p class="help">{{ field.help_text }}</p>{% endif %}
+			</div>
+		</div>
+		{% endfor %}
+	</fieldset>
+	{% endwith %}
+{% endif %}
 {% endblock %}

@@ -33,7 +33,8 @@ class Layout(mixins.ActivityMixin):
     '''
     name = models.CharField(_('layout name'), max_length=128)
     template = models.CharField(_('layout template'), max_length=256)
-    is_default = models.BooleanField(_('is default placeholde'), default=False)
+    is_default = models.BooleanField(_('is default layout for page'),
+                                     default=False)
 
     objects = managers.LayoutManager()
 
@@ -53,6 +54,16 @@ class Layout(mixins.ActivityMixin):
                 query = query.exclude(pk=self.pk)
             query = query.update(is_default=False)
         return super(Layout, self).save(*args, **kwargs)
+
+    def __str__(self):
+        '''Get string representation
+        '''
+        return self.name
+
+    def __unicode__(self):
+        '''Get unicode representation
+        '''
+        return unicode(self.name)
 
 
 class Placeholder(models.Model):
