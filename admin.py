@@ -12,6 +12,13 @@ class LanguageAdmin(admin.ModelAdmin):
 admin.site.register(models.Language, LanguageAdmin)
 
 
+class LayoutAdmin(admin.ModelAdmin):
+    '''Admin iterface for layouts list
+    '''
+    model = models.Layout
+    list_display = ('name', 'template', 'is_default', 'is_active', )
+
+
 class PageAdmin(admin.ModelAdmin):
     '''Class represents admin interface for page model
     '''

@@ -1,7 +1,18 @@
-from django.contrib.contenttypes.models import ContentType
+'''
+Models for pages application:
+-----------------------------
+
+Page
+Layout
+Placeholder
+PageTranslation
+PageContent
+PageArticle
+'''
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
+import managers
 import mixins
 
 Language = mixins.Language
@@ -11,6 +22,7 @@ class Page(mixins.TranslatedMixin):
     '''Page object used to represent object's position inside a site objects
     hierarhy, activity state and can contains translation
     '''
+
     class Meta:
         verbose_name = _('page')
         verbose_name_plural = _('pages')
@@ -22,6 +34,8 @@ class Layout(mixins.ActivityMixin):
     name = models.CharField(_('layout name'), max_length=128)
     template = models.CharField(_('layout template'), max_length=256)
     is_default = models.BooleanField(_('is default placeholde'), default=False)
+
+    objects = managers.LayoutManager()
 
     class Meta:
         verbose_name = _('page layout')
@@ -64,12 +78,17 @@ class PageTranslation(mixins.ActivityMixin, mixins.HTMLMetaMixin,
     '''
     page = models.ForeignKey(Page, related_name='translations',
                              verbose_name=_('page'))
-    content_type = models.ForeignKey(ContentType, null=True, blank=True,
-                                     verbose_name=_('page content type'))
+    layout = models.ForeignKey(Layout, related_name='pages')
 
     class Meta:
         verbose_name = _('page translation')
         verbose_name_plural = _('pages translations')
+
+    def save(self, *args, **kwargs):
+        '''Save PageTranslations
+        If there is no layout specified use default layout
+        '''
+        return super(PageTranslation, self).save(*args, **kwargs)
 
 
 class PageContent(models.Model):
@@ -77,6 +96,8 @@ class PageContent(models.Model):
     for all page content classes
     '''
     page = models.ForeignKey(PageTranslation, related_name='content')
+    layout = models.ForeignKey(Layout, related_name='blocks')
+    place = models.ForeignKey(Placeholder, related_name='blocks')
 
     class Meta:
         abstract = True

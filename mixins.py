@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.db import models
 from django.utils.translation import get_language_info, ugettext_lazy as _
+from django.utils import functional
 
 
 class ActivityMixin(models.Model):
@@ -116,6 +117,7 @@ class TranslatedMixin(models.Model):
     class Meta:
         abstract = True
 
+    @functional.cached_property
     def get_translation(self, language):
         if isinstance(language, basestring):
             return self.translations.get(language_id=language)
