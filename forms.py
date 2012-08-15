@@ -25,17 +25,16 @@ class PageTranslationForm(forms.ModelForm):
             self.page = None
         # Create form
         super(PageTranslationForm, self).__init__(*args, **kwargs)
+        self.fields['title_tag'].required = True  # Requred
 
-    def save(self, *args, **kwargs):
+    def save(self, commit=True, page=None):
         '''Save object
         '''
-        # Save form but without commiting to database
-        commit = kwargs.get('commit', False)
-        kwargs['commit'] = False
-        translation = super(PageTranslationForm, self).save(*args, **kwargs)
+        # Not commits yet
+        translation = super(PageTranslationForm, self).save(commit=False)
         # Update translation with language and page
         translation.language = self.language
-        translation.page = kwargs.get('page', self.page)
+        translation.page = page or self.page
         if commit:  # Commit changes if needed
             translation.save()
         return translation

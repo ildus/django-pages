@@ -1,5 +1,7 @@
 '''Build an admin interface for pages and page-related things
 '''
+import functools
+
 from django.contrib import admin
 from django.core import exceptions, urlresolvers
 from django.db import transaction
@@ -45,10 +47,10 @@ class PageAdmin(admin.ModelAdmin):
         '''
         return models.Layout.objects.get_default()
 
-    def get_translation_forms(self, request):
+    def get_translation_forms(self, data=None):
         '''Get a list of forms for different languages
         '''
-        return [forms.PageTranslationForm(request.POST, language=language,
+        return [forms.PageTranslationForm(data or {}, language=language,
                                 initial={'is_active': True,
                                         'layout__id': self.default_layout.id})
                 for language in models.Language.objects.all()]
@@ -64,20 +66,24 @@ class PageAdmin(admin.ModelAdmin):
             raise exceptions.PermissionDenied
 
         ModelForm = self.get_form(request)
-        translations = self.get_translation_forms(request)
         if request.method == 'POST':
-            # Trying to send new post
+            # Trying to create new post
             form = ModelForm(request.POST, request.FILES)
+            translations = self.get_translation_forms(request.POST)
+
             if form.is_valid():
                 new_object = self.save_form(request, form, change=False)
                 form_validated = True
             else:
                 form_validated = False
                 new_object = self.model()
-            if form_validated:
-                for translation in translations:
-                    translation.save(request.POST)
+            transl_valid = functools.reduce(
+                            lambda valid, trans: trans.is_valid() and valid,
+                            translations, True)
+            if form_validated and transl_valid:
                 self.save_model(request, new_object, form, True)
+                for translation in translations:
+                    translation.save(page=new_object)
                 self.log_addition(request, new_object)
                 return self.response_add(request, new_object)
         else:
@@ -91,6 +97,8 @@ class PageAdmin(admin.ModelAdmin):
                 if isinstance(f, models.ManyToManyField):
                     initial[k] = initial[k].split(",")
             form = ModelForm(initial=initial)
+            # Prepare translations
+            translations = self.get_translation_forms()
         # Create an admin form
         adminForm = admin.helpers.AdminForm(form,
                                         list(self.get_fieldsets(request)),
@@ -120,7 +128,7 @@ class PageAdmin(admin.ModelAdmin):
         model = self.model
         opts = model._meta
 
-        obj = self.get_object(request, admin.utils.unquote(object_id))
+        obj = self.get_object(request, admin.util.unquote(object_id))
 
         if not self.has_change_permission(request, obj):
             raise exceptions.PermissionDenied

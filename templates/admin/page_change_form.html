@@ -16,33 +16,13 @@
 	<div id="translation_forms">
 	{% for translation in translations %}
 		<fieldset class="tab aligned" id="trans_{{ translation.language.code }}" {% if not forloop.first %}style="display: none;"{% endif %}>
-			<h2>Метаданные</h2>
-			{% for field in translation %}
-			<div class="form-row field-{{ field.name }}">
-				<div>
-					{{ field.label_tag }}
-					{{ field }}
-					{% if field.help_text %}<p class="help">{{ field.help_text }}</p>{% endif %}
-				</div>
-			</div>
-			{% endfor %}
+			{% include "admin/includes/translation_form.html" with translation=translation %}
 		</fieldset>
 	{% endfor %}
 	</div>
 {% else %}
-	{% with translation=translations|first %}
 	<fieldset class="module aligned">
-		<h2>Метаданные</h2>
-		{% for field in translations %}
-		<div class="form-row field-{{ field.name }}">
-			<div>
-				{{ field.label_tag }}
-				{{ field }}
-				{% if field.help_text %}<p class="help">{{ field.help_text }}</p>{% endif %}
-			</div>
-		</div>
-		{% endfor %}
+		{% include "admin/includes/translation_form.html" with translation=translations|first %}
 	</fieldset>
-	{% endwith %}
 {% endif %}
 {% endblock %}

@@ -27,6 +27,22 @@ class Page(mixins.TranslatedMixin):
         verbose_name = _('page')
         verbose_name_plural = _('pages')
 
+    def __str__(self):
+        '''Get string representation based on current locale: get translation
+        title.
+        '''
+        try:
+            str_value = self.get_translation().title_tag
+        except PageTranslation.DoesNotExist:
+            str_value = 'Page object'
+        finally:
+            return str_value
+
+    def __unicode__(self):
+        '''Get unicode of current locale translation's title for this page
+        '''
+        return unicode(self.__str__())
+
 
 class Layout(mixins.ActivityMixin):
     '''Layout for building pages
@@ -96,7 +112,7 @@ class PageTranslation(mixins.ActivityMixin, mixins.HTMLMetaMixin,
         verbose_name_plural = _('pages translations')
 
     def save(self, *args, **kwargs):
-        '''Save PageTranslations
+        '''Save PageTranslation
         If there is no layout specified use default layout
         '''
         return super(PageTranslation, self).save(*args, **kwargs)
