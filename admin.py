@@ -47,10 +47,16 @@ class PageAdmin(admin.ModelAdmin):
         '''
         return models.Layout.objects.get_default()
 
-    def get_translation_forms(self, data=None):
+    def get_translation_forms(self, data=None, page=None):
         '''Get a list of forms for different languages
         '''
-        return [forms.PageTranslationForm(data or {}, language=language,
+        def get_instance(language):
+            return (models.PageTranslation.objects.get(page=page,
+                                                       language=language)
+                    if page else None)
+        return [forms.PageTranslationForm(data or {},
+                                instance=get_instance(language),
+                                language=language, page=page or None,
                                 initial={'is_active': True,
                                         'layout__id': self.default_layout.id})
                 for language in models.Language.objects.all()]
@@ -147,23 +153,32 @@ class PageAdmin(admin.ModelAdmin):
 
         ModelForm = self.get_form(request, obj)
         if request.method == 'POST':
+            # Validate save form
             form = ModelForm(request.POST, request.FILES, instance=obj)
+            translations = self.get_translation_forms(request.POST, obj)
+
             if form.is_valid():
                 form_validated = True
                 new_object = self.save_form(request, form, change=True)
             else:
                 form_validated = False
                 new_object = obj
-
-            if form_validated:
+            # Validate translations
+            transl_valid = functools.reduce(
+                            lambda valid, trans: trans.is_valid() and valid,
+                            translations, True)
+            # If all valid real save
+            if form_validated and transl_valid:
                 self.save_model(request, new_object, form, True)
+                for transaction in translations:
+                    transaction.save(page=new_object)
                 change_message = self.construct_change_message(request, form)
                 self.log_change(request, new_object, change_message)
                 return self.response_change(request, new_object)
-
         else:
             # Create new form
             form = ModelForm(instance=obj)
+            translations = self.get_translation_forms({}, page=obj)
 
         adminForm = admin.helpers.AdminForm(form,
                                     self.get_fieldsets(request, obj),
@@ -182,6 +197,7 @@ class PageAdmin(admin.ModelAdmin):
             'media': media,
             'errors': admin.helpers.AdminErrorList(form, []),
             'app_label': opts.app_label,
+            'translations': translations
         }
         context.update(extra_context or {})
         return self.render_change_form(request, context, change=True, obj=obj, form_url=form_url)
