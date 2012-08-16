@@ -42,23 +42,16 @@ class PageTranslationForm(forms.ModelForm):
         self.fields['title_tag'].required = True  # Requred
         self.fields['layout'].widget.attrs['class'] = 'layout-choose'
 
-    def clean_alias(self):
-        '''Clean alias field
-        '''
-        data = self.cleaned_data['alias']
-        return data or slugify(self.cleaned_data['title_tag'])
-
     def clean(self):
         '''Set default values
         '''
         cleaned_data = super(PageTranslationForm, self).clean()
         if not cleaned_data.get('title', None):
-            cleaned_data['title'] = cleaned_data['title_tag']
+            cleaned_data['title'] = cleaned_data.get('title_tag', '')
         if not cleaned_data.get('header', None):
-            cleaned_data['header'] = cleaned_data['title_tag']
+            cleaned_data['header'] = cleaned_data.get('title_tag', '')
         if not cleaned_data.get('alias', None):
-            cleaned_data['alias'] = slugify(cleaned_data['title_tag'])
-        print cleaned_data
+            cleaned_data['alias'] = slugify(cleaned_data.get('title_tag', ''))
         return cleaned_data
 
     def save(self, commit=True, page=None):
