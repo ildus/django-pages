@@ -86,14 +86,12 @@ class PageAdmin(admin.ModelAdmin):
     def validate_forms(self, forms):
         '''Validate a list of forms
         '''
-        print 'validate_forms', forms
         return functools.reduce(lambda valid, form: form.is_valid() and valid,
                                 forms, True)
 
     def validate_inlines(self, translations):
         '''Validate a list forms for contents
         '''
-        print 'validate_inlines', translations
         return functools.reduce(
                 lambda valid, transl:
                         self.validate_forms(transl.content_forms) and valid,
@@ -256,7 +254,7 @@ class PageAdmin(admin.ModelAdmin):
             # Create new form
             form = ModelForm(instance=obj)
             translations = self.get_translation_forms(page=obj)
-            self.get_layout_forms(translations)
+            self.get_layout_forms(translations, None, obj)
 
         adminForm = admin.helpers.AdminForm(form,
                                     self.get_fieldsets(request, obj),
