@@ -48,6 +48,12 @@ PLACEHOLDERS = {
         models.Placeholder.objects.get_or_create(alias='main')[0],
         models.Placeholder.objects.get_or_create(alias='left')[0],
         models.Placeholder.objects.get_or_create(alias='rigth')[0],
+    ),
+    'main.html': (
+        models.Placeholder.objects.get_or_create(alias='main')[0],
+        models.Placeholder.objects.get_or_create(alias='left_top')[0],
+        models.Placeholder.objects.get_or_create(alias='left_bottom')[0],
+        models.Placeholder.objects.get_or_create(alias='rigth')[0],
     )
 }
 
