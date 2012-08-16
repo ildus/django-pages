@@ -2,6 +2,8 @@
 '''
 from django import forms
 
+from tinymce.widgets import TinyMCE
+
 import models
 
 
@@ -18,6 +20,7 @@ class PageTranslationForm(forms.ModelForm):
         # Get language and page
         self.language = kwargs['language']
         del kwargs['language']
+        kwargs['prefix'] = self.language.raw_code
         if 'page' in kwargs:
             self.page = kwargs['page']
             del kwargs['page']
@@ -70,8 +73,13 @@ class PageContentForm(forms.ModelForm):
             del kwargs['page']
         else:
             self.page = None
+        kwargs['prefix'] = '-'.join([kwargs['language'].raw_code,
+                                     str(self.layout.pk), str(self.place.pk)])
+        del kwargs['language']
         # Create form
         super(PageContentForm, self).__init__(*args, **kwargs)
+        # Update a widget
+        self.fields['text'].widget = TinyMCE()
 
     def save(self, commit=True, page=None):
         '''Save object

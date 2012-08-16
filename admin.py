@@ -127,7 +127,8 @@ class PageAdmin(admin.ModelAdmin):
             layout = translation.layout or self.default_layout
             translation.content_forms = [
                 forms.PageContentForm(data, layout=layout, place=placeholder,
-                    instance=get_instance(translation, placeholder, layout))
+                    instance=get_instance(translation, placeholder, layout),
+                    language=translation.language)
                 for placeholder in self.get_placeholders(layout.template)]
 
     def save_data(self, request, new_object, form, translations):
