@@ -86,14 +86,17 @@ class PageAdmin(admin.ModelAdmin):
     def validate_forms(self, forms):
         '''Validate a list of forms
         '''
+        print 'validate_forms', forms
         return functools.reduce(lambda valid, form: form.is_valid() and valid,
                                 forms, True)
 
     def validate_inlines(self, translations):
         '''Validate a list forms for contents
         '''
+        print 'validate_inlines', translations
         return functools.reduce(
-                lambda valid, transl: self.validate_forms(transl) and valid,
+                lambda valid, transl:
+                        self.validate_forms(transl.content_forms) and valid,
                 translations, True)
 
     def get_translation_forms(self, data=None, page=None):
@@ -127,6 +130,15 @@ class PageAdmin(admin.ModelAdmin):
                     instance=get_instance(translation, placeholder, layout))
                 for placeholder in self.get_placeholders(layout.template)]
 
+    def save_data(self, request, new_object, form, translations):
+        '''Save model and translations with whole data
+        '''
+        self.save_model(request, new_object, form, True)
+        for translation in translations:
+            tranls_obj = translation.save(page=new_object)
+            for content in translation.content_forms:
+                content.save(page=tranls_obj)
+
     @csrf_protect_m
     @transaction.commit_on_success
     def add_view(self, request, form_url='', extra_context=None):
@@ -153,12 +165,8 @@ class PageAdmin(admin.ModelAdmin):
             transl_valid = self.validate_forms(translations)
             inlines_valid = self.validate_inlines(translations)
             if form_validated and transl_valid and inlines_valid:
-                self.save_model(request, new_object, form, True)
-                for translation in translations:
-                    translation.save(page=new_object)
-                    for content in translation.forms:
-                        content.save(page=translation)
                 self.log_addition(request, new_object)
+                self.save_data(request, new_object, form, translations)
                 return self.response_add(request, new_object)
         else:
             # Prepare the dict of initial data from the request.
@@ -235,11 +243,10 @@ class PageAdmin(admin.ModelAdmin):
                 new_object = obj
             # Validate translations, conten
             transl_valid = self.validate_forms(translations)
+            inlines_valid = self.validate_inlines(translations)
             # If all valid real save
-            if form_validated and transl_valid:
-                self.save_model(request, new_object, form, True)
-                for translation in translations:
-                    translation.save(page=new_object)
+            if form_validated and transl_valid and inlines_valid:
+                self.save_data(request, new_object, form, translations)
                 change_message = self.construct_change_message(request, form,
                                                                [])
                 self.log_change(request, new_object, change_message)
@@ -248,6 +255,7 @@ class PageAdmin(admin.ModelAdmin):
             # Create new form
             form = ModelForm(instance=obj)
             translations = self.get_translation_forms(page=obj)
+            self.get_layout_forms(translations)
 
         adminForm = admin.helpers.AdminForm(form,
                                     self.get_fieldsets(request, obj),

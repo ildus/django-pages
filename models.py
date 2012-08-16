@@ -98,6 +98,16 @@ class Placeholder(models.Model):
             self.name = self.alias
         return super(Placeholder, self).save(*args, **kwargs)
 
+    def __str__(self):
+        '''Get placeholder name
+        '''
+        return self.name
+
+    def __unicode__(self):
+        '''Get name in unicode form
+        '''
+        return unicode(self.__str__())
+
 
 class PageTranslation(mixins.ActivityMixin, mixins.HTMLMetaMixin,
                       mixins.NavigationMixin, mixins.TranslationMixin):
@@ -133,9 +143,21 @@ class PageContent(models.Model):
 class PageArticle(PageContent):
     '''Page contains an article
     '''
-    aticle_title = models.CharField(_('article title'), max_length=1024)
-    text = models.TextField(_('page text'), help_text=_('page html content'))
+    article_title = models.CharField(_('article title'), max_length=1024,
+                                     null=False, blank=False)
+    text = models.TextField(_('page text'), help_text=_('page html content'),
+                            null=False, blank=False)
 
     class Meta:
         verbose_name = _('page article')
         verbose_name_plural = _('page articles')
+
+    def __str__(self):
+        '''Get placeholder name
+        '''
+        return self.article_title
+
+    def __unicode__(self):
+        '''Get name in unicode form
+        '''
+        return unicode(self.__str__())

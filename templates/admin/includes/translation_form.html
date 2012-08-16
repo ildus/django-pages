@@ -9,3 +9,15 @@
 				</div>
 			</div>
 			{% endfor %}
+			{% for form in translation.content_forms %}
+			<h2>{{ form.place }}</h2>
+				{% for field in form %}
+			<div class="form-row field-{{ field.name }}">
+				<div class="{% if not field.is_readonly and field.errors %} errors{% endif %}">
+					{{ field.label_tag }}
+					{{ field }}
+					{% if field.help_text %}<p class="help">{{ field.help_text }}</p>{% endif %}
+				</div>
+			</div>
+				{% endfor %}
+			{% endfor %}
