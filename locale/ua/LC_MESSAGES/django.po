@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-03 19:18+0200\n"
+"POT-Creation-Date: 2012-08-16 17:53-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,102 +17,167 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: mixins.py:8
+#: admin.py:241
+#, python-format
+msgid "Add %s"
+msgstr ""
+
+#: admin.py:268
+#, python-format
+msgid "%(name)s object with primary key %(key)r does not exist."
+msgstr ""
+
+#: admin.py:315
+#, python-format
+msgid "Change %s"
+msgstr ""
+
+#: mixins.py:11
 msgid "is active"
 msgstr ""
 
-#: mixins.py:22
+#: mixins.py:25
 msgid "title"
 msgstr ""
 
-#: mixins.py:23
+#: mixins.py:26
 msgid "the title tag"
 msgstr ""
 
-#: mixins.py:24
+#: mixins.py:27
 msgid "description"
 msgstr ""
 
-#: mixins.py:25
+#: mixins.py:28
 msgid "tag meta description"
 msgstr ""
 
-#: mixins.py:26
+#: mixins.py:29
 msgid "keywords"
 msgstr ""
 
-#: mixins.py:27
+#: mixins.py:30
 msgid "tag meta keywords"
 msgstr ""
 
-#: mixins.py:36
+#: mixins.py:39
 msgid "language code"
 msgstr ""
 
-#: mixins.py:39 mixins.py:122
+#: mixins.py:43 mixins.py:136
 msgid "language"
 msgstr ""
 
-#: mixins.py:40
+#: mixins.py:44
 msgid "languages"
 msgstr ""
 
-#: mixins.py:73
+#: mixins.py:86
 msgid "alias"
 msgstr ""
 
-#: mixins.py:74
+#: mixins.py:87
 msgid "URL string alias (slug)"
 msgstr ""
 
-#: mixins.py:75
+#: mixins.py:88
 msgid "header"
 msgstr ""
 
-#: mixins.py:76
+#: mixins.py:89
 msgid "H1 page tag"
 msgstr ""
 
-#: mixins.py:77
+#: mixins.py:90
 msgid "title attr"
 msgstr ""
 
-#: mixins.py:78
+#: mixins.py:91
 msgid "the title tag attr"
 msgstr ""
 
-#: models.py:15 models.py:24
+#: models.py:27 models.py:117
 msgid "page"
 msgstr ""
 
-#: models.py:16
+#: models.py:28
 msgid "pages"
 msgstr ""
 
-#: models.py:26
-msgid "page content type"
+#: models.py:50
+msgid "layout name"
 msgstr ""
 
-#: models.py:29
+#: models.py:51
+msgid "layout template"
+msgstr ""
+
+#: models.py:52
+msgid "is default layout for page"
+msgstr ""
+
+#: models.py:58
+msgid "page layout"
+msgstr ""
+
+#: models.py:59
+msgid "page layouts"
+msgstr ""
+
+#: models.py:88
+msgid "access name"
+msgstr ""
+
+#: models.py:89
+msgid "name for accessing from templates"
+msgstr ""
+
+#: models.py:90
+msgid "verbose name"
+msgstr ""
+
+#: models.py:91
+msgid "name shown in admin interface"
+msgstr ""
+
+#: models.py:121
 msgid "page translation"
 msgstr ""
 
-#: models.py:30
+#: models.py:122
 msgid "pages translations"
 msgstr ""
 
-#: models.py:46
+#: models.py:146
+msgid "article title"
+msgstr ""
+
+#: models.py:148
 msgid "page text"
 msgstr ""
 
-#: models.py:46
+#: models.py:148
 msgid "page html content"
 msgstr ""
 
-#: models.py:49
+#: models.py:152
 msgid "page article"
 msgstr ""
 
-#: models.py:50
+#: models.py:153
 msgid "page articles"
+msgstr ""
+
+#: templates/admin/includes/translation_form.html:4
+msgid "metadata"
+msgstr ""
+
+#: templates/admin/includes/translation_form.html:16
+msgid "toggle SOE fields "
+msgstr ""
+
+#: templates/admin/includes/translation_form.html:33
+msgid ""
+"Do you realy want change layout? It will gain a lose of all block content "
+"unsaved!"
 msgstr ""

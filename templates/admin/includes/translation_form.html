@@ -21,7 +21,7 @@
 			</div>
 			<script type="text/javascript">
 				var $ = django.jQuery;
-				var url_template = "{% if add %}{% url opts|admin_urlname:'get_layout_form' layout_id="__layoout_id__" lang_code="__lang_code__" %}{% else %}{% url opts|admin_urlname:'get_layout_form' page_id="__page_id__" layout_id="__layout_id__" lang_code="__lang_code__" %}{% endif %}";
+				var url_template = "{% if add %}{% url opts|admin_urlname:'get_layout_form' layout_id="__layout_id__" lang_code="__lang_code__" %}{% else %}{% url opts|admin_urlname:'get_layout_form' page_id="__page_id__" layout_id="__layout_id__" lang_code="__lang_code__" %}{% endif %}";
 				$(function() {
 						var location_parts = window.location.pathname.split('/');
 						var page_id = location_parts[location_parts.length - 2];
