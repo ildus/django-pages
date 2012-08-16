@@ -40,15 +40,7 @@ class PageTranslationForm(forms.ModelForm):
         # Create form
         super(PageTranslationForm, self).__init__(*args, **kwargs)
         self.fields['title_tag'].required = True  # Requred
-
-    @property
-    def layout(self):
-        '''Shourtcut for getting layout
-        '''
-        if hasattr(self, 'cleaned_data') and 'layout' in self.cleaned_data:
-            return models.Layout.objects.get(id=self.cleaned_data['layout'])
-        else:
-            return None
+        self.fields['layout'].widget.attrs['class'] = 'layout-choose'
 
     def clean(self):
         '''Set default values
@@ -75,7 +67,7 @@ class PageTranslationForm(forms.ModelForm):
         return translation
 
     FIELD_GROUPS = (
-        ('title_tag', 'layout', 'active', ),
+        ('title_tag', 'layout', 'is_active', ),
         ('header', 'title', 'alias', ),
         ('meta_description', 'meta_keywords', )
     )
@@ -83,10 +75,8 @@ class PageTranslationForm(forms.ModelForm):
     def fieldsets(self):
         '''Group fields into fieldsets
         '''
-        print 'Get a fieldsets'
         fieldsets = {}
         for field in self:
-            print field
             index = 0
             for group in PageTranslationForm.FIELD_GROUPS:
                 index += 1
@@ -95,8 +85,13 @@ class PageTranslationForm(forms.ModelForm):
                         fieldsets[index].append(field)
                     else:
                         fieldsets[index] = [field]
-        print fieldsets, [fieldsets[index] for index in fieldsets]
         return [fieldsets[index] for index in fieldsets]
+
+    @property
+    def layout(self):
+        '''Get instance layout
+        '''
+        return self.instance.layout if self.instance else None
 
     class Meta:
         model = models.PageTranslation

@@ -1,4 +1,5 @@
-{% load i18n %}
+{% load url from future %}
+{% load i18n admin_urls admin_modify %}
 			<!-- Page metadata -->
 			<h2>{% trans "metadata" %}</h2>
 			{% if translation.non_field_errors %}<p class="errornote ">{{ translation.non_field_errors }}</p>{% endif %}
@@ -15,24 +16,30 @@
 				{% if forloop.first %}<div class="form-row"><a href="#" id="toggleSEO">{% trans "toggle SOE fields "%}</a></div>{% endif %}
 			{% endfor %}
 			<!-- Page content -->
-			{% for form in translation.content_forms %}
-			<h2>{{ form.place }}</h2>
-				{% for field in form %}
-			<div class="form-row field-{{ field.name }}">
-				<div class="{% if not field.is_readonly and field.errors %} errors{% endif %}">
-					{{ field.label_tag }}
-					{{ field }}
-					{% if field.help_text %}<p class="help">{{ field.help_text }}</p>{% endif %}
-				</div>
+			<div id="layout-container-{{ translation.language.raw_code }}">
+				{% include "admin/includes/content_form.html" with formset=translation.content_forms %}
 			</div>
-				{% endfor %}
-			{% endfor %}
 			<script type="text/javascript">
 				var $ = django.jQuery;
+				var url_template = "{% if add %}{% url opts|admin_urlname:'get_layout_form' layout_id="__layoout_id__" lang_code="__lang_code__" %}{% else %}{% url opts|admin_urlname:'get_layout_form' page_id="__page_id__" layout_id="__layout_id__" lang_code="__lang_code__" %}{% endif %}";
 				$(function() {
+						var location_parts = window.location.pathname.split('/');
+						var page_id = location_parts[location_parts.length - 2];
 						$('#toggleSEO').bind('click', function(e) {
 							e.preventDefault();
 							$('.additional-fields').toggle();
+						});
+						$('select.layout-choose option').bind('click', function(e) {
+							var answer = confirm('{% trans "Do you realy want change layout? It will gain a lose of all block content unsaved!" %}');
+							if (!answer) { return; }
+							var self = $(this);
+							var url = url_template.replace('__layout_id__', self.val());
+							var lang_code = self.parent().attr('name').split('-')[0];
+							if (page_id != 'add') { 
+								url = url.replace('__page_id__', page_id); }
+							url = url.replace('__lang_code__', lang_code);
+							console.log('#layout-container-' + lang_code, url);
+							$('#layout-container-' + lang_code).load(url);
 						});
 				});
 			</script>

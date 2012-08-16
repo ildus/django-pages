@@ -3,6 +3,8 @@
 import functools
 
 from django import http
+from django.conf import settings
+from django.conf.urls import defaults as urls
 from django.contrib import admin
 from django.core import exceptions, urlresolvers
 from django.db import transaction
@@ -57,25 +59,70 @@ class PageAdmin(admin.ModelAdmin):
     add_form_template = 'admin/page_change_form.html'
     change_form_template = 'admin/page_change_form.html'
 
+    def get_urls(self):
+        '''Get urls accessible in admin interface
+        '''
+        def wrap(view):
+            def wrapper(*args, **kwargs):
+                return self.admin_site.admin_view(view)(*args, **kwargs)
+            return functools.update_wrapper(wrapper, view)
+
+        info = self.model._meta.app_label, self.model._meta.module_name
+
+        return urls.patterns('',
+            urls.url('^get_layout_form/(?P<page_id>\w+)/(?P<layout_id>\w+)/' +
+                     '(?P<lang_code>\w+)$',
+                     wrap(self.layout_view),
+                     name='%s_%s_get_layout_form' % info),
+            urls.url('^get_layout_form/(?P<layout_id>\w+)/(?P<lang_code>\w+)$',
+                     wrap(self.layout_view),
+                     name='%s_%s_get_layout_form' % info),
+        ) + super(PageAdmin, self).get_urls()
+
+
     def get_placeholders(self, template_name):
         '''Get a list of placeholders for layout
         '''
         return PLACEHOLDERS[template_name]
 
-    def render_layout_form(self, layout_form):
+    def render_layout_form(self, language, layout, page):
         '''
         '''
-        return ''
+        from django.template import loader
+        if page:
+            def get_instance(place):
+                return models.PageArticle.objects.get_or_create(layout=layout,
+                                                    page=page, place=place)[0]
+        else:
+            get_instance = lambda __: None
+
+        formset = [forms.PageContentForm(None, layout=layout, place=place,
+                                         instance=get_instance(place),
+                                         language=language)
+                   for place in self.get_placeholders(layout.template)]
+        return loader.render_to_string('admin/includes/content_form.html',
+                                       {'formset': formset})
 
     @csrf_protect_m
-    def layout_view(self, request, layout_id=None):
+    def layout_view(self, request, page_id=None, layout_id=None,
+                    lang_code=None):
         '''Get a lyout
         '''
+        # Select language
+        lang_code = lang_code or settings.LANGUAGE_CODE
+        lang = models.Language.objects.get(code=lang_code)
+        # Select layout
         layout_manager = models.Layout.objects
         layout = (layout_manager.get(id=layout_id) if layout_id
-                  else layout_manager.get_default())
-        layout_form = forms.LayoutForm(instance=layout)
-        return http.HttpResponse(self.render_layout_form(layout_form))
+                  else self.default_layout)
+        # Select page
+        if page_id:
+            page = models.PageTranslation.objects.get(page_id=page_id,
+                                                      language=lang)
+        else:
+            page = None
+
+        return http.HttpResponse(self.render_layout_form(lang, layout, page))
 
     @functional.cached_property
     def default_layout(self):
