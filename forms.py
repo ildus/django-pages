@@ -42,6 +42,12 @@ class PageTranslationForm(forms.ModelForm):
         self.fields['title_tag'].required = True  # Requred
         self.fields['layout'].widget.attrs['class'] = 'layout-choose'
 
+    def clean_alias(self):
+        '''Clean alias field
+        '''
+        data = self.cleaned_data['alias']
+        return data or slugify(self.cleaned_data['title_tag'])
+
     def clean(self):
         '''Set default values
         '''
@@ -51,8 +57,9 @@ class PageTranslationForm(forms.ModelForm):
         if not cleaned_data.get('header', None):
             cleaned_data['header'] = cleaned_data['title_tag']
         if not cleaned_data.get('alias', None):
-            cleaned_data['alias'] = cleaned_data['title_tag']
-        return self.cleaned_data
+            cleaned_data['alias'] = slugify(cleaned_data['title_tag'])
+        print cleaned_data
+        return cleaned_data
 
     def save(self, commit=True, page=None):
         '''Save object
@@ -67,8 +74,8 @@ class PageTranslationForm(forms.ModelForm):
         return translation
 
     FIELD_GROUPS = (
-        ('title_tag', 'layout', 'is_active', ),
-        ('header', 'title', 'alias', ),
+        ('title_tag', 'layout', 'alias', ),
+        ('header', 'title', 'is_active', ),
         ('meta_description', 'meta_keywords', )
     )
 
@@ -91,7 +98,9 @@ class PageTranslationForm(forms.ModelForm):
     def layout(self):
         '''Get instance layout
         '''
-        return self.instance.layout if self.instance else None
+        if self.instance and self.instance.layout_id:
+            return self.instance.layout
+        return None
 
     class Meta:
         model = models.PageTranslation

@@ -147,10 +147,11 @@ class PageAdmin(admin.ModelAdmin):
     def get_translation_forms(self, data=None, page=None):
         '''Get a list of forms for different languages
         '''
-        get_instance = (
-            lambda lang: models.PageTranslation.objects.get(page=page,
-                                                            language=lang)
-            if page else lambda __: None)
+        if page:
+            get_instance = lambda lang: models.PageTranslation.objects.get(
+                                                    page=page, language=lang)
+        else:
+            get_instance = lambda __: None
         return [forms.PageTranslationForm(data, language=language,
                                 instance=get_instance(language), page=page,
                                 initial={'is_active': True,
