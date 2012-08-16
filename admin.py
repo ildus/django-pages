@@ -2,6 +2,7 @@
 '''
 import functools
 
+from django import http
 from django.contrib import admin
 from django.core import exceptions, urlresolvers
 from django.db import transaction
@@ -33,6 +34,21 @@ class LayoutAdmin(admin.ModelAdmin):
 
 admin.site.register(models.Layout, LayoutAdmin)
 
+PLACEHOLDERS = {
+    'one_column.html': (
+        models.Placeholder.objects.get_or_create(alias='main')[0],
+    ),
+    'two_columns.html': (
+        models.Placeholder.objects.get_or_create(alias='main')[0],
+        models.Placeholder.objects.get_or_create(alias='sidebar')[0],
+    ),
+    'three_columns.html': (
+        models.Placeholder.objects.get_or_create(alias='main')[0],
+        models.Placeholder.objects.get_or_create(alias='left')[0],
+        models.Placeholder.objects.get_or_create(alias='rigth')[0],
+    )
+}
+
 
 class PageAdmin(admin.ModelAdmin):
     '''Class represents admin interface for page model
@@ -41,25 +57,75 @@ class PageAdmin(admin.ModelAdmin):
     add_form_template = 'admin/page_change_form.html'
     change_form_template = 'admin/page_change_form.html'
 
+    def get_placeholders(self, template_name):
+        '''Get a list of placeholders for layout
+        '''
+        return PLACEHOLDERS[template_name]
+
+    def render_layout_form(self, layout_form):
+        '''
+        '''
+        return ''
+
+    @csrf_protect_m
+    def layout_view(self, request, layout_id=None):
+        '''Get a lyout
+        '''
+        layout_manager = models.Layout.objects
+        layout = (layout_manager.get(id=layout_id) if layout_id
+                  else layout_manager.get_default())
+        layout_form = forms.LayoutForm(instance=layout)
+        return http.HttpResponse(self.render_layout_form(layout_form))
+
     @functional.cached_property
     def default_layout(self):
         '''Get default layout
         '''
         return models.Layout.objects.get_default()
 
+    def validate_forms(self, forms):
+        '''Validate a list of forms
+        '''
+        return functools.reduce(lambda valid, form: form.is_valid() and valid,
+                                forms, True)
+
+    def validate_inlines(self, translations):
+        '''Validate a list forms for contents
+        '''
+        return functools.reduce(
+                lambda valid, transl: self.validate_forms(transl) and valid,
+                translations, True)
+
     def get_translation_forms(self, data=None, page=None):
         '''Get a list of forms for different languages
         '''
-        def get_instance(language):
-            return (models.PageTranslation.objects.get(page=page,
-                                                       language=language)
-                    if page else None)
-        return [forms.PageTranslationForm(data or {},
-                                instance=get_instance(language),
-                                language=language, page=page or None,
+        get_instance = (
+            lambda lang: models.PageTranslation.objects.get(page=page,
+                                                            language=lang)
+            if page else lambda __: None)
+        return [forms.PageTranslationForm(data, language=language,
+                                instance=get_instance(language), page=page,
                                 initial={'is_active': True,
-                                        'layout__id': self.default_layout.id})
+                                         'layout__id': self.default_layout.id})
                 for language in models.Language.objects.all()]
+
+    def get_layout_forms(self, translations, data=None, page=None):
+        '''Get layout forms
+        '''
+        if page:
+            def get_instance(transl, place, layout):
+                page_translation = models.PageTranslation.objects.get(
+                                        page=page, language=transl.language)
+                return models.PageArticle.objects.get_or_create(layout=layout,
+                                        page=page_translation, place=place)[0]
+        else:
+            get_instance = lambda __, ___, ____: None
+        for translation in translations:
+            layout = translation.layout or self.default_layout
+            translation.content_forms = [
+                forms.PageContentForm(data, layout=layout, place=placeholder,
+                    instance=get_instance(translation, placeholder, layout))
+                for placeholder in self.get_placeholders(layout.template)]
 
     @csrf_protect_m
     @transaction.commit_on_success
@@ -76,6 +142,7 @@ class PageAdmin(admin.ModelAdmin):
             # Trying to create new post
             form = ModelForm(request.POST, request.FILES)
             translations = self.get_translation_forms(request.POST)
+            self.get_layout_forms(translations, request.POST)
 
             if form.is_valid():
                 new_object = self.save_form(request, form, change=False)
@@ -83,13 +150,14 @@ class PageAdmin(admin.ModelAdmin):
             else:
                 form_validated = False
                 new_object = self.model()
-            transl_valid = functools.reduce(
-                            lambda valid, trans: trans.is_valid() and valid,
-                            translations, True)
-            if form_validated and transl_valid:
+            transl_valid = self.validate_forms(translations)
+            inlines_valid = self.validate_inlines(translations)
+            if form_validated and transl_valid and inlines_valid:
                 self.save_model(request, new_object, form, True)
                 for translation in translations:
                     translation.save(page=new_object)
+                    for content in translation.forms:
+                        content.save(page=translation)
                 self.log_addition(request, new_object)
                 return self.response_add(request, new_object)
         else:
@@ -105,6 +173,7 @@ class PageAdmin(admin.ModelAdmin):
             form = ModelForm(initial=initial)
             # Prepare translations
             translations = self.get_translation_forms()
+            self.get_layout_forms(translations)
         # Create an admin form
         adminForm = admin.helpers.AdminForm(form,
                                         list(self.get_fieldsets(request)),
@@ -156,6 +225,7 @@ class PageAdmin(admin.ModelAdmin):
             # Validate save form
             form = ModelForm(request.POST, request.FILES, instance=obj)
             translations = self.get_translation_forms(request.POST, obj)
+            self.get_layout_forms(translations, request.POST, obj)
 
             if form.is_valid():
                 form_validated = True
@@ -163,22 +233,21 @@ class PageAdmin(admin.ModelAdmin):
             else:
                 form_validated = False
                 new_object = obj
-            # Validate translations
-            transl_valid = functools.reduce(
-                            lambda valid, trans: trans.is_valid() and valid,
-                            translations, True)
+            # Validate translations, conten
+            transl_valid = self.validate_forms(translations)
             # If all valid real save
             if form_validated and transl_valid:
                 self.save_model(request, new_object, form, True)
-                for transaction in translations:
-                    transaction.save(page=new_object)
-                change_message = self.construct_change_message(request, form)
+                for translation in translations:
+                    translation.save(page=new_object)
+                change_message = self.construct_change_message(request, form,
+                                                               [])
                 self.log_change(request, new_object, change_message)
                 return self.response_change(request, new_object)
         else:
             # Create new form
             form = ModelForm(instance=obj)
-            translations = self.get_translation_forms({}, page=obj)
+            translations = self.get_translation_forms(page=obj)
 
         adminForm = admin.helpers.AdminForm(form,
                                     self.get_fieldsets(request, obj),
@@ -200,8 +269,8 @@ class PageAdmin(admin.ModelAdmin):
             'translations': translations
         }
         context.update(extra_context or {})
-        return self.render_change_form(request, context, change=True, obj=obj, form_url=form_url)
-
+        return self.render_change_form(request, context, change=True, obj=obj,
+                                       form_url=form_url)
 
 
 admin.site.register(models.Page, PageAdmin)

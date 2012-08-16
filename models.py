@@ -130,9 +130,10 @@ class PageContent(models.Model):
         abstract = True
 
 
-class PageArticle(models.Model):
+class PageArticle(PageContent):
     '''Page contains an article
     '''
+    aticle_title = models.CharField(_('article title'), max_length=1024)
     text = models.TextField(_('page text'), help_text=_('page html content'))
 
     class Meta:

@@ -27,6 +27,15 @@ class PageTranslationForm(forms.ModelForm):
         super(PageTranslationForm, self).__init__(*args, **kwargs)
         self.fields['title_tag'].required = True  # Requred
 
+    @property
+    def layout(self):
+        '''Shourtcut for getting layout
+        '''
+        if hasattr(self, 'cleaned_data') and 'layout' in self.cleaned_data:
+            return models.Layout.objects.get(id=self.cleaned_data['layout'])
+        else:
+            return None
+
     def save(self, commit=True, page=None):
         '''Save object
         '''
@@ -42,3 +51,41 @@ class PageTranslationForm(forms.ModelForm):
     class Meta:
         model = models.PageTranslation
         exclude = ('language', 'page', )  # Set them manually
+
+
+class PageContentForm(forms.ModelForm):
+    '''Form for page content
+    '''
+
+    def __init__(self, *args, **kwargs):
+        '''Build new forms includes
+        '''
+        # Get arguments
+        self.layout = kwargs['layout']
+        del kwargs['layout']
+        self.place = kwargs['place']
+        del kwargs['place']
+        if 'page' in kwargs:
+            self.page = kwargs['page']
+            del kwargs['page']
+        else:
+            self.page = None
+        # Create form
+        super(PageContentForm, self).__init__(*args, **kwargs)
+
+    def save(self, commit=True, page=None):
+        '''Save object
+        '''
+        # Not commits yet
+        content = super(PageContentForm, self).save(commit=False)
+        # Update content block with language and page
+        content.layout = self.layout
+        content.page = page or self.page
+        content.place = self.place
+        if commit:  # Commit changes if needed
+            content.save()
+        return content
+
+    class Meta:
+        model = models.PageArticle
+        exclude = ('layout', 'page', 'place', )  # Set them manually
