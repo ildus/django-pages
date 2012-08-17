@@ -22,6 +22,7 @@ class Page(mixins.TranslatedMixin):
     '''Page object used to represent object's position inside a site objects
     hierarhy, activity state and can contains translation
     '''
+    is_default = models.BooleanField(_('is default page'), default=False)
 
     class Meta:
         verbose_name = _('page')
@@ -42,6 +43,19 @@ class Page(mixins.TranslatedMixin):
         '''Get unicode of current locale translation's title for this page
         '''
         return unicode(self.__str__())
+
+    def save(self, *args, **kwargs):
+        '''Save layout
+        Because it can be only one layout selected update all other layouts to
+        set their is_default values to False if current layout's is_default
+        was set to True
+        '''
+        if self.is_default:
+            query = self.__class__.objects.all()
+            if self.pk:
+                query = query.exclude(pk=self.pk)
+            query = query.update(is_default=False)
+        return super(Page, self).save(*args, **kwargs)
 
 
 class Layout(mixins.ActivityMixin):

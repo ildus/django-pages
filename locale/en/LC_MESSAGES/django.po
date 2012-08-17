@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-08-16 17:53-0500\n"
+"POT-Creation-Date: 2012-08-17 17:22-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,17 +17,17 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: admin.py:241
+#: admin.py:248
 #, python-format
 msgid "Add %s"
 msgstr ""
 
-#: admin.py:268
+#: admin.py:275
 #, python-format
 msgid "%(name)s object with primary key %(key)r does not exist."
 msgstr ""
 
-#: admin.py:315
+#: admin.py:322
 #, python-format
 msgid "Change %s"
 msgstr ""
@@ -96,75 +96,79 @@ msgstr ""
 msgid "the title tag attr"
 msgstr ""
 
-#: models.py:27 models.py:117
+#: models.py:25
+msgid "is default page"
+msgstr ""
+
+#: models.py:28 models.py:131
 msgid "page"
 msgstr ""
 
-#: models.py:28
+#: models.py:29
 msgid "pages"
 msgstr ""
 
-#: models.py:50
+#: models.py:64
 msgid "layout name"
 msgstr ""
 
-#: models.py:51
+#: models.py:65
 msgid "layout template"
 msgstr ""
 
-#: models.py:52
+#: models.py:66
 msgid "is default layout for page"
 msgstr ""
 
-#: models.py:58
+#: models.py:72
 msgid "page layout"
 msgstr ""
 
-#: models.py:59
+#: models.py:73
 msgid "page layouts"
 msgstr ""
 
-#: models.py:88
+#: models.py:102
 msgid "access name"
 msgstr ""
 
-#: models.py:89
+#: models.py:103
 msgid "name for accessing from templates"
 msgstr ""
 
-#: models.py:90
+#: models.py:104
 msgid "verbose name"
 msgstr ""
 
-#: models.py:91
+#: models.py:105
 msgid "name shown in admin interface"
 msgstr ""
 
-#: models.py:121
+#: models.py:135
 msgid "page translation"
 msgstr ""
 
-#: models.py:122
+#: models.py:136
 msgid "pages translations"
 msgstr ""
 
-#: models.py:146
+#: models.py:160
 msgid "article title"
 msgstr ""
 
-#: models.py:148
+#: models.py:162
 msgid "page text"
 msgstr ""
 
-#: models.py:148
+#: models.py:162
 msgid "page html content"
 msgstr ""
 
-#: models.py:152
+#: models.py:166
 msgid "page article"
 msgstr ""
 
-#: models.py:153
+#: models.py:167
 msgid "page articles"
 msgstr ""
 

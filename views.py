@@ -10,7 +10,7 @@ def page_view(request, slug=None):
     '''
     page = (models.PageTranslation.objects.get(alias=slug, is_active=True)
             if slug
-            else models.PageTranslation.objects.all()[0])
+            else models.PageTranslation.objects.get(page__is_default=True))
     template_name = page.layout.template
     articles = models.PageArticle.objects.filter(page=page,
                             layout=page.layout).select_related('place_alias')
