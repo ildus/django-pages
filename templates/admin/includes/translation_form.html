@@ -41,7 +41,7 @@
 							$.get(url, function(data) {
 									$('textarea').each(function() {
 										var id = $(this).attr('id');
-										if ($('#' + id + '_container').length) {
+										if ($('#' + id + '_parent').length) {
 											tinyMCE.execCommand('mceRemoveControl', false, id);
 										}
 									});
@@ -49,7 +49,7 @@
 									var controls = [];
 									$('textarea').each(function() {
 										var id = $(this).attr('id');
-										if ($('#' + id + '_container').length) {
+										if ($('#' + id + '_parent').length) {
 											controls.push(id);
 											tinyMCE.execCommand('mceRemoveControl', false, id);
 										}
@@ -60,4 +60,4 @@
 								});
 						});
 				});
-			</script>
+			</script
