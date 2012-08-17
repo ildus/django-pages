@@ -29,14 +29,14 @@
 							e.preventDefault();
 							$('.additional-fields').toggle();
 						});
-						$('select.layout-choose option').bind('click', function(e) {
+						function selectLayout(select, value) {
 							var answer = confirm('{% trans "Do you realy want change layout? It will gain a lose of all block content unsaved!" %}');
 							if (!answer) { return; }
-							var self = $(this);
-							var url = url_template.replace('__layout_id__', self.val());
-							var lang_code = self.parent().attr('name').split('-')[0];
+							var url = url_template.replace('__layout_id__', value);
+							var lang_code = select.attr('name').split('-')[0];
 							if (page_id != 'add') { 
-								url = url.replace('__page_id__', page_id); }
+								url = url.replace('__page_id__', page_id);
+							}
 							url = url.replace('__lang_code__', lang_code);
 							$.get(url, function(data) {
 									$('textarea').each(function() {
@@ -58,6 +58,14 @@
 										tinyMCE.execCommand('mceAddControl', false, controls[i]);
 									}
 								});
+						}
+						$('select.layout-choose option').bind('click', function(e) {
+							var self = $(this);
+							selectLayout(self.parent(), self.val());
+						});
+						$('select.layout-choose').bind('change', function(e) {
+							var self = $(this);
+							selectLayout(self, $('option:selected', self).val());
 						});
 				});
 			</script
