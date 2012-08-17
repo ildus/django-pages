@@ -206,17 +206,18 @@ class PageAdmin(admin.ModelAdmin):
         if request.method == 'POST':
             # Trying to create new post
             form = ModelForm(request.POST, request.FILES)
-            translations = self.get_translation_forms(request.POST)
-            self.get_layout_forms(translations, request.POST)
-
             if form.is_valid():
                 new_object = self.save_form(request, form, change=False)
                 form_validated = True
             else:
                 form_validated = False
                 new_object = self.model()
+            # Validate additional data
+            translations = self.get_translation_forms(request.POST)
             transl_valid = self.validate_forms(translations)
+            self.get_layout_forms(translations, request.POST)
             inlines_valid = self.validate_inlines(translations)
+            # If data valid can save results
             if form_validated and transl_valid and inlines_valid:
                 self.log_addition(request, new_object)
                 self.save_data(request, new_object, form, translations)
@@ -285,8 +286,6 @@ class PageAdmin(admin.ModelAdmin):
         if request.method == 'POST':
             # Validate save form
             form = ModelForm(request.POST, request.FILES, instance=obj)
-            translations = self.get_translation_forms(request.POST, obj)
-            self.get_layout_forms(translations, request.POST, obj)
 
             if form.is_valid():
                 form_validated = True
@@ -295,7 +294,9 @@ class PageAdmin(admin.ModelAdmin):
                 form_validated = False
                 new_object = obj
             # Validate translations, conten
+            translations = self.get_translation_forms(request.POST, obj)
             transl_valid = self.validate_forms(translations)
+            self.get_layout_forms(translations, request.POST, obj)
             inlines_valid = self.validate_inlines(translations)
             # If all valid real save
             if form_validated and transl_valid and inlines_valid:

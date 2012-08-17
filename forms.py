@@ -26,7 +26,7 @@ class PageTranslationForm(forms.ModelForm):
         '''Create PageTranslationForm.
 
         Request language attribute and also accepts optional object attribute.
-        They would be used on oblect saving
+        They would be used on object saving
         '''
         # Get language and page
         self.language = kwargs['language']
@@ -91,7 +91,11 @@ class PageTranslationForm(forms.ModelForm):
     def layout(self):
         '''Get instance layout
         '''
-        if self.instance and self.instance.layout_id:
+        print 'Get layout'
+        print self.cleaned_data if hasattr(self, 'cleaned_data') else self.data
+        if hasattr(self, 'cleaned_data') and self.cleaned_data['layout']:
+            return self.cleaned_data['layout']
+        elif self.instance and self.instance.layout_id:
             return self.instance.layout
         return None
 
