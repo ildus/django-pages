@@ -38,8 +38,26 @@
 							if (page_id != 'add') { 
 								url = url.replace('__page_id__', page_id); }
 							url = url.replace('__lang_code__', lang_code);
-							console.log('#layout-container-' + lang_code, url);
-							$('#layout-container-' + lang_code).load(url);
+							$.get(url, function(data) {
+									$('textarea').each(function() {
+										var id = $(this).attr('id');
+										if ($('#' + id + '_container').length) {
+											tinyMCE.execCommand('mceRemoveControl', false, id);
+										}
+									});
+									$('#layout-container-' + lang_code).html(data);
+									var controls = [];
+									$('textarea').each(function() {
+										var id = $(this).attr('id');
+										if ($('#' + id + '_container').length) {
+											controls.push(id);
+											tinyMCE.execCommand('mceRemoveControl', false, id);
+										}
+									});
+									for (var i in controls) {
+										tinyMCE.execCommand('mceAddControl', false, controls[i]);
+									}
+								});
 						});
 				});
 			</script>
