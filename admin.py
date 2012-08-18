@@ -46,14 +46,16 @@ PLACEHOLDERS = {
     ),
     'three_columns.html': (
         models.Placeholder.objects.get_or_create(alias='main')[0],
-        models.Placeholder.objects.get_or_create(alias='left')[0],
-        models.Placeholder.objects.get_or_create(alias='right')[0],
+        models.Placeholder.objects.get_or_create(alias='sidebar')[0],
     ),
     'main.html': (
         models.Placeholder.objects.get_or_create(alias='main')[0],
         models.Placeholder.objects.get_or_create(alias='left')[0],
         models.Placeholder.objects.get_or_create(alias='right')[0],
         models.Placeholder.objects.get_or_create(alias='bottom')[0],
+    ),
+    'news.html': (
+        models.Placeholder.objects.get_or_create(alias='sidebar')[0],
     )
 }
 
@@ -89,7 +91,7 @@ class PageAdmin(admin.ModelAdmin):
     def get_placeholders(self, template_name):
         '''Get a list of placeholders for layout
         '''
-        return PLACEHOLDERS[template_name]
+        return PLACEHOLDERS.get(template_name, ())
 
     def render_layout_form(self, language, layout, page):
         '''

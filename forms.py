@@ -91,8 +91,6 @@ class PageTranslationForm(forms.ModelForm):
     def layout(self):
         '''Get instance layout
         '''
-        print 'Get layout'
-        print self.cleaned_data if hasattr(self, 'cleaned_data') else self.data
         if hasattr(self, 'cleaned_data') and self.cleaned_data['layout']:
             return self.cleaned_data['layout']
         elif self.instance and self.instance.layout_id:
