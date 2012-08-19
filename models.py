@@ -175,3 +175,49 @@ class PageArticle(PageContent):
         '''Get name in unicode form
         '''
         return unicode(self.__str__())
+
+
+class MenuItem(models.Model):
+    '''Item position
+    '''
+    menu = models.ForeignKey('Menu', verbose_name=_('menu'))
+    page = models.ForeignKey(Page, verbose_name=_('page'))
+    order = models.IntegerField(_('consecutive number'))
+
+    class Meta:
+        verbose_name = _('men itemu')
+        verbose_name_plural = _('menu items')
+
+    def __str__(self):
+        '''Get placeholder name
+        '''
+        return str(self.menu) + ': ' + str(self.page)
+
+    def __unicode__(self):
+        '''Get name in unicode form
+        '''
+        return unicode(self.__str__())
+
+
+class Menu(mixins.ActivityMixin):
+    '''Add a menus
+    '''
+    name = models.CharField(_('menu name'), max_length=255)
+    alias = models.CharField(_('template alias'), max_length=64,
+                             primary_key=True)
+    items = models.ManyToManyField(Page, through=MenuItem,
+                                   verbose_name=_('pages'))
+
+    class Meta:
+        verbose_name = _('menu')
+        verbose_name_plural = _('menus')
+
+    def __str__(self):
+        '''Get placeholder name
+        '''
+        return self.name
+
+    def __unicode__(self):
+        '''Get name in unicode form
+        '''
+        return unicode(self.__str__())
