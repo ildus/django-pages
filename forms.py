@@ -5,6 +5,8 @@ import re
 import unidecode
 
 from django import forms
+from django.contrib.admin import widgets
+from django.utils.translation import ugettext_lazy as _
 
 from tinymce.widgets import TinyMCE
 
@@ -144,3 +146,37 @@ class PageContentForm(forms.ModelForm):
     class Meta:
         model = models.PageArticle
         exclude = ('layout', 'page', 'place', )  # Set them manually
+
+
+class MenuForm(forms.ModelForm):
+    '''Manage menus
+    '''
+    items = forms.ModelMultipleChoiceField(
+                        queryset=models.Page.objects.all(), required=False,
+                        widget=widgets.FilteredSelectMultiple(is_stacked=False,
+                                                verbose_name=_('menu items')))
+
+    class Meta:
+        model = models.Menu
+
+    def __init__(self, *args, **kwargs):
+        '''Create new form and get initial data from items
+        '''
+        super(MenuForm, self).__init__(*args, **kwargs)
+        if self.instance:
+            items_ordered = self.instance.items.all().order_by('order')
+            self.fields['items'].initial = items_ordered
+
+    def save(self, commit=True):
+        '''Save menu with items in order
+        '''
+        menu = super(MenuForm, self).save(commit=False)
+        menu.items.clear()
+        if commit:
+            menu.save()
+        items = self.cleaned_data['items']
+        for index, item in enumerate(items):
+            print index, unicode(item)
+            item.order = index
+            models.MenuItem.objects.create(menu=menu, page=item, order=index)
+        return menu

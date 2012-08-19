@@ -15,8 +15,7 @@ def get_page_data(request, slug):
     articles = models.PageArticle.objects.filter(page=page,
                             layout=page.layout).select_related('place_alias')
     blocks = {article.place.alias: article for article in articles}
-    pages = models.PageTranslation.objects.filter(is_active=True)
-    return template_name, {'page': page, 'blocks': blocks, 'pages': pages}
+    return template_name, {'page': page, 'blocks': blocks}
 
 
 def page_view(request, slug=None):

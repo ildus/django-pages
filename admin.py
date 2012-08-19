@@ -336,5 +336,23 @@ class PageAdmin(admin.ModelAdmin):
         return self.render_change_form(request, context, change=True, obj=obj,
                                        form_url=form_url)
 
-
 admin.site.register(models.Page, PageAdmin)
+
+
+class MenuAdmin(admin.ModelAdmin):
+    '''Admin interface for menus
+    '''
+    model = models.Menu
+    form = forms.MenuForm
+
+    def save_related(self, request, form, formsets, change):
+        """Given the ``HttpRequest``, the parent ``ModelForm`` instance, the
+        list of inline formsets and a boolean value based on whether the
+        parent is being added or changed, save the related objects to the
+        database. Note that at this point save_form() and save_model() have
+        already been called.
+        """
+        for formset in formsets:
+            self.save_formset(request, form, formset, change=change)
+
+admin.site.register(models.Menu, MenuAdmin)
