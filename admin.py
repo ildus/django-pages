@@ -1,6 +1,7 @@
 '''Build an admin interface for pages and page-related things
 '''
 import functools
+import urlparse
 
 from django import http
 from django.conf import settings
@@ -9,13 +10,73 @@ from django.contrib import admin
 from django.core import exceptions, urlresolvers
 from django.db import transaction
 from django.views.decorators import csrf
-from django.utils import decorators, encoding, functional, html
+from django.utils import decorators, encoding, functional, html, safestring
 from django.utils.translation import ugettext as _
 
 import forms
 import models
 
 csrf_protect_m = decorators.method_decorator(csrf.csrf_protect)
+
+
+def back_redirect(request):
+    '''Generate response to redirect ro previous page
+    '''
+    if 'HTTP_REFERER' in request.META:
+        url = urlparse.urljoin(request.META['HTTP_REFERER'],
+                               request.META['QUERY_STRING'])
+    else:
+        url = '/admin/'
+    return http.HttpResponseRedirect(url)
+
+
+class ActivityMixin(admin.ModelAdmin):
+    '''Mixin
+    '''
+    def do_change_active(obj):
+        '''Change delete status
+        '''
+        is_active = obj.is_active
+        icon = is_active and 'icon-yes.gif' or 'icon-no.gif'
+        action = is_active and 'deactivate' or 'activate'
+        msg = is_active and 'Restore file' or 'Delete file'
+        return safestring.mark_safe('''
+            <a class='active_switch' title='%s' href="%s/%s/">
+                <img alt="%s" src="%s/admin/img/%s" />
+            </a>''' % (msg, obj.pk, action, msg, settings.STATIC_URL, icon))
+    do_change_active.allow_tags = True
+    do_change_active.short_description = _('is active')
+    do_change_active = staticmethod(do_change_active)
+
+    def change_active(self, request, object_id, is_active):
+        '''Change document deleted state
+        '''
+        obj = self.get_object(request, object_id)
+        if obj.is_active != is_active:
+            obj.is_active = is_active
+            obj.save()
+        return back_redirect(request)
+
+    def get_urls(self):
+        """Get urls for make object active/inactive
+        """
+        def wrap(view):
+            '''Wrap object with permissions checking
+            '''
+            def wrapper(*args, **kwargs):
+                '''View wrapper
+                '''
+                return self.admin_site.admin_view(view)(*args, **kwargs)
+            return functools.update_wrapper(wrapper, view)
+
+        info = self.model._meta.app_label, self.model._meta.module_name
+        urlpatterns = urls.patterns('',
+            urls.url(r'^(.+)/activate/$', wrap(self.change_active),
+                     {'is_active': True}, name='%s_%s_change' % info, ),
+            urls.url(r'^(.+)/deactivate/$', wrap(self.change_active),
+                     {'is_active': False}, name='%s_%s_change' % info, ),
+        )
+        return urlpatterns + super(ActivityMixin, self).get_urls()
 
 
 class LanguageAdmin(admin.ModelAdmin):
@@ -339,11 +400,12 @@ class PageAdmin(admin.ModelAdmin):
 admin.site.register(models.Page, PageAdmin)
 
 
-class MenuAdmin(admin.ModelAdmin):
+class MenuAdmin(ActivityMixin):
     '''Admin interface for menus
     '''
     model = models.Menu
     form = forms.MenuForm
+    list_display = ('name', 'alias', ActivityMixin.do_change_active, )
 
     def save_related(self, request, form, formsets, change):
         """Given the ``HttpRequest``, the parent ``ModelForm`` instance, the
