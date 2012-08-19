@@ -196,7 +196,7 @@ class MenuItem(models.Model):
     def __unicode__(self):
         '''Get name in unicode form
         '''
-        return unicode(self.__str__())
+        return unicode(self.menu) + ': ' + unicode(self.page)
 
 
 class Menu(mixins.ActivityMixin):

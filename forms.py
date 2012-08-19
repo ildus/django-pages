@@ -148,6 +148,22 @@ class PageContentForm(forms.ModelForm):
         exclude = ('layout', 'page', 'place', )  # Set them manually
 
 
+def get_filter_func(items):
+    '''Get function for 
+    '''
+    def filter_func(item):
+        return item.id in items
+    return filter_func
+
+
+def get_cmp_func(order):
+    '''Get comparision function
+    '''
+    def cmp_func(first, second):
+        return order.index(int(first.id)) > order.index(int(second.id))
+    return cmp_func
+
+
 class MenuForm(forms.ModelForm):
     '''Manage menus
     '''
@@ -164,8 +180,15 @@ class MenuForm(forms.ModelForm):
         '''
         super(MenuForm, self).__init__(*args, **kwargs)
         if self.instance:
-            items_ordered = self.instance.items.all().order_by('order')
-            self.fields['items'].initial = items_ordered
+            items = models.MenuItem.objects.filter(menu=self.instance)
+            if len(self.data) > 0:
+                order = [int(item_id)
+                         for item_id in self.data.getlist('items')]
+                ordered_items = sorted(filter(get_filter_func(order), items),
+                                       cmp=get_cmp_func(order))
+            else:
+                ordered_items = items.order_by('order')
+            self.fields['items'].initial = ordered_items
 
     def save(self, commit=True):
         '''Save menu with items in order
@@ -175,8 +198,9 @@ class MenuForm(forms.ModelForm):
         if commit:
             menu.save()
         items = self.cleaned_data['items']
-        for index, item in enumerate(items):
-            print index, unicode(item)
-            item.order = index
-            models.MenuItem.objects.create(menu=menu, page=item, order=index)
+        order = {int(id): index
+                 for index, id in enumerate(self.data.getlist('items'))}
+        for item in items:
+            models.MenuItem.objects.create(menu=menu, page=item,
+                                           order=order[item.id])
         return menu
