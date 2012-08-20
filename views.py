@@ -5,12 +5,12 @@ from django import shortcuts, template
 from . import models
 
 
-def get_page_data(request, slug):
+def get_page_data(request, slug=None):
     '''Get all data needed for page
     '''
-    page = (models.PageTranslation.objects.get(alias=slug, is_active=True)
-            if slug
-            else models.PageTranslation.objects.get(page__is_default=True))
+    filters = ({'alias': slug, 'is_active': True} if slug
+                else {'page__is_default': True})
+    page = shortcuts.get_object_or_404(models.PageTranslation, **filters)
     template_name = page.layout.template
     articles = models.PageArticle.objects.filter(page=page,
                             layout=page.layout).select_related('place_alias')
