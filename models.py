@@ -185,7 +185,7 @@ class MenuItem(models.Model):
     order = models.IntegerField(_('consecutive number'))
 
     class Meta:
-        verbose_name = _('men itemu')
+        verbose_name = _('menu item')
         verbose_name_plural = _('menu items')
 
     def __str__(self):

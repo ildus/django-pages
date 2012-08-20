@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-08-17 17:22-0500\n"
+"POT-Creation-Date: 2012-08-20 10:20-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,24 +19,28 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
 
-#: admin.py:248
+#: admin.py:48 mixins.py:11
+msgid "is active"
+msgstr "активен"
+
+#: admin.py:311
 #, python-format
 msgid "Add %s"
 msgstr "Добавить %s"
 
-#: admin.py:275
+#: admin.py:338
 #, python-format
 msgid "%(name)s object with primary key %(key)r does not exist."
-msgstr ""
+msgstr "Обьект %(name)s с ключем %(key)r не существует."
 
-#: admin.py:322
+#: admin.py:385
 #, python-format
 msgid "Change %s"
 msgstr "Изменить %s"
 
-#: mixins.py:11
-msgid "is active"
-msgstr "активен"
+#: forms.py:173 models.py:189
+msgid "menu items"
+msgstr "пункты меню"
 
 #: mixins.py:25
 msgid "title"
@@ -102,11 +106,11 @@ msgstr "атрибут тега title"
 msgid "is default page"
 msgstr "страница по-умолчанию (главная)"
 
-#: models.py:28 models.py:131
+#: models.py:28 models.py:131 models.py:184
 msgid "page"
 msgstr "страница"
 
-#: models.py:29
+#: models.py:29 models.py:209
 msgid "pages"
 msgstr "страницы"
 
@@ -144,7 +148,7 @@ msgstr "название"
 
 #: models.py:105
 msgid "name shown in admin interface"
-msgstr ""
+msgstr "название отображаемое в интерфейсе администратора"
 
 #: models.py:135
 msgid "page translation"
@@ -173,6 +177,30 @@ msgstr "статья"
 #: models.py:167
 msgid "page articles"
 msgstr "статьи"
+
+#: models.py:183 models.py:212
+msgid "menu"
+msgstr "меню"
+
+#: models.py:185
+msgid "consecutive number"
+msgstr "номер по-порядку"
+
+#: models.py:188
+msgid "menu item"
+msgstr "пункт меню"
+
+#: models.py:205
+msgid "menu name"
+msgstr "название раскладки"
+
+#: models.py:206
+msgid "template alias"
+msgstr "алиас в шаблоне"
+
+#: models.py:213
+msgid "menus"
+msgstr "меню"
 
 #: templates/admin/includes/translation_form.html:4
 msgid "metadata"
