@@ -187,16 +187,17 @@ class MenuItem(models.Model):
     class Meta:
         verbose_name = _('menu item')
         verbose_name_plural = _('menu items')
+        ordering = ('order', )
 
-    def __str__(self):
-        '''Get placeholder name
-        '''
-        return str(self.menu) + ': ' + str(self.page)
+    # def __str__(self):
+    #     '''Get placeholder name
+    #     '''
+    #     return str(self.menu) + ': ' + str(self.page)
 
     def __unicode__(self):
         '''Get name in unicode form
         '''
-        return unicode(self.menu) + ': ' + unicode(self.page)
+        return '%s: %s' % (self.menu, self.page)
 
 
 class Menu(mixins.ActivityMixin):

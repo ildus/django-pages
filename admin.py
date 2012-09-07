@@ -418,3 +418,4 @@ class MenuAdmin(ActivityMixin):
             self.save_formset(request, form, formset, change=change)
 
 admin.site.register(models.Menu, MenuAdmin)
+admin.site.register(models.MenuItem)
