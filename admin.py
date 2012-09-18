@@ -100,6 +100,8 @@ admin.site.register(models.Layout, LayoutAdmin)
 PLACEHOLDERS = {
     'one_column.html': (
         models.Placeholder.objects.get_or_create(alias='main')[0],
+        models.Placeholder.objects.get_or_create(alias='second')[0],
+        models.Placeholder.objects.get_or_create(alias='third')[0],
     ),
     'two_columns.html': (
         models.Placeholder.objects.get_or_create(alias='main')[0],
