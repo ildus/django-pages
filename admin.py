@@ -98,6 +98,9 @@ class LayoutAdmin(admin.ModelAdmin):
 admin.site.register(models.Layout, LayoutAdmin)
 
 PLACEHOLDERS = {
+    'single_column.html': (
+        models.Placeholder.objects.get_or_create(alias='main')[0],
+    ),
     'one_column.html': (
         models.Placeholder.objects.get_or_create(alias='main')[0],
         models.Placeholder.objects.get_or_create(alias='second')[0],
