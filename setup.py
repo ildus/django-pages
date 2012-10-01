@@ -16,7 +16,11 @@ setup(
     url='https://github.com/GrAndSE/django-pages',
     long_description=open('README', 'r').read(),
     packages=['pages'],
-    package_data={'pages': ['templates/admin/*'], },
+    package_data={
+        'pages': [
+            'templates/admin/includes/*',
+            'templates/admin/page_change_form.html']
+    },
     zip_safe=False,
     requires=[],
     classifiers=[
