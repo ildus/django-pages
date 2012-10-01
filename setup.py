@@ -15,11 +15,11 @@ setup(
     author_email='undeadgrandse@gmail.com',
     url='https://github.com/GrAndSE/django-pages',
     long_description=open('README', 'r').read(),
-    packages=('pages', ),
-    package_data={'pages': ('templates/admin/*', ), },
+    packages=['pages'],
+    package_data={'pages': ['templates/admin/*'], },
     zip_safe=False,
-    requires=(),
-    classifiers=(
+    requires=[],
+    classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Web Environment',
         'Framework :: Django',
@@ -27,5 +27,5 @@ setup(
         'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
-    ),
+    ],
 )
