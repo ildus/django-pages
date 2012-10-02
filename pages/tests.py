@@ -1,11 +1,8 @@
 """This file contains test for pages models and mixins. 
-
-TODO: split test into different files to make it easier to understand and modify
 """
 from django.test import TestCase
 
-import mixins
-import models
+from pages import mixins, models
 
 
 class TranslationMixinTest(TestCase):

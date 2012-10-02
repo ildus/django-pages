@@ -263,7 +263,8 @@ class PageAdmin(admin.ModelAdmin):
     @csrf_protect_m
     @transaction.commit_on_success
     def add_view(self, request, form_url='', extra_context=None):
-        "The 'add' admin view for this model."
+        '''The 'add' admin view for this model.
+        '''
         model = self.model
         opts = model._meta
 
@@ -295,10 +296,10 @@ class PageAdmin(admin.ModelAdmin):
             initial = dict(request.GET.items())
             for k in initial:
                 try:
-                    f = opts.get_field(k)
+                    field = opts.get_field(k)
                 except models.FieldDoesNotExist:
                     continue
-                if isinstance(f, models.ManyToManyField):
+                if isinstance(field, models.ManyToManyField):
                     initial[k] = initial[k].split(",")
             form = ModelForm(initial=initial)
             # Prepare translations

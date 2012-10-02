@@ -27,5 +27,6 @@ def menu_items(context, var_name, alias):
                                                          page_id__in=pages)
     translations_map = {order[transl.id]: transl
                         for transl in translations}
-    context[var_name] = [translations_map[index] for index in range(len(page_ids))]
+    context[var_name] = [translations_map[index]
+                         for index in range(len(page_ids))]
     return ''
