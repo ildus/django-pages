@@ -33,7 +33,7 @@ class Page(mixins.TranslatedMixin):
         title.
         '''
         try:
-            str_value = self.get_translation().title_tag
+            str_value = str(self.get_translation())
         except PageTranslation.DoesNotExist:
             str_value = 'Page object'
         finally:
@@ -140,6 +140,16 @@ class PageTranslation(mixins.ActivityMixin, mixins.HTMLMetaMixin,
         If there is no layout specified use default layout
         '''
         return super(PageTranslation, self).save(*args, **kwargs)
+
+    def __str__(self):
+        '''Get string representation
+        '''
+        return self.title_tag or self.header or self.title
+
+    def __unicode__(self):
+        '''Get unicode representation
+        '''
+        return unicode(self.__str__())
 
 
 class PageContent(models.Model):
