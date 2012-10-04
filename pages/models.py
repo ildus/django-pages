@@ -23,6 +23,8 @@ class Page(mixins.TranslatedMixin):
     hierarhy, activity state and can contains translation
     '''
     is_default = models.BooleanField(_('is default page'), default=False)
+    parent = models.ForeignKey('Page', verbose_name=_('parent page'),
+                               null=True, blank=True)
 
     class Meta:
         verbose_name = _('page')
@@ -33,7 +35,7 @@ class Page(mixins.TranslatedMixin):
         title.
         '''
         try:
-            str_value = str(self.get_translation())
+            str_value = self.get_translation().__str__()
         except PageTranslation.DoesNotExist:
             str_value = 'Page object'
         finally:
