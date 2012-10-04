@@ -15,7 +15,7 @@ setup(
     author_email='undeadgrandse@gmail.com',
     url='https://github.com/GrAndSE/django-pages',
     long_description=open('README', 'r').read(),
-    packages=['pages'],
+    packages=['pages', 'pages.templatetags'],
     package_data={
         'pages': [
             'templates/admin/includes/*',
