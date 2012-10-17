@@ -97,34 +97,6 @@ class LayoutAdmin(admin.ModelAdmin):
 
 admin.site.register(models.Layout, LayoutAdmin)
 
-PLACEHOLDERS = {
-    'single_column.html': (
-        models.Placeholder.objects.get_or_create(alias='main')[0],
-    ),
-    'one_column.html': (
-        models.Placeholder.objects.get_or_create(alias='main')[0],
-        models.Placeholder.objects.get_or_create(alias='second')[0],
-        models.Placeholder.objects.get_or_create(alias='third')[0],
-    ),
-    'two_columns.html': (
-        models.Placeholder.objects.get_or_create(alias='main')[0],
-        models.Placeholder.objects.get_or_create(alias='sidebar')[0],
-    ),
-    'three_columns.html': (
-        models.Placeholder.objects.get_or_create(alias='main')[0],
-        models.Placeholder.objects.get_or_create(alias='sidebar')[0],
-    ),
-    'main.html': (
-        models.Placeholder.objects.get_or_create(alias='main')[0],
-        models.Placeholder.objects.get_or_create(alias='left')[0],
-        models.Placeholder.objects.get_or_create(alias='right')[0],
-        models.Placeholder.objects.get_or_create(alias='bottom')[0],
-    ),
-    'news.html': (
-        models.Placeholder.objects.get_or_create(alias='sidebar')[0],
-    )
-}
-
 
 class PageAdmin(admin.ModelAdmin):
     '''Class represents admin interface for page model
@@ -157,7 +129,9 @@ class PageAdmin(admin.ModelAdmin):
     def get_placeholders(self, template_name):
         '''Get a list of placeholders for layout
         '''
-        return PLACEHOLDERS.get(template_name, ())
+        aliases = settings.PAGES_TEMPLATES_PLACEHOLDERS.get(template_name, ())
+        return [models.Placeholder.objects.get_or_create(alias=alias)[0]
+                for alias in aliases]
 
     def render_layout_form(self, language, layout, page):
         '''
