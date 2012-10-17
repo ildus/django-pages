@@ -104,6 +104,8 @@ class PageAdmin(admin.ModelAdmin):
     model = models.Page
     add_form_template = 'admin/page_change_form.html'
     change_form_template = 'admin/page_change_form.html'
+    search_fields = ('translations__header', 'translations__alias', )
+    list_filter = ('translations__layout', )
 
     def get_urls(self):
         '''Get urls accessible in admin interface
