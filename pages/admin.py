@@ -104,8 +104,28 @@ class PageAdmin(admin.ModelAdmin):
     model = models.Page
     add_form_template = 'admin/page_change_form.html'
     change_form_template = 'admin/page_change_form.html'
-    search_fields = ('translations__header', 'translations__alias', )
+    search_fields = ('translations__header', 'translations__title',
+                     'translations__alias', )
     list_filter = ('translations__layout', )
+    list_display = ('title', 'alias', 'layout', )
+
+    def title(self, obj):
+        '''Get title
+        '''
+        return unicode(obj)
+    title.short_description = _('title')
+
+    def alias(self, obj):
+        '''Get alias
+        '''
+        return obj.get_translation().alias
+    alias.short_description = _('alias')
+
+    def layout(self, obj):
+        '''Get layout
+        '''
+        return obj.get_translation().layout
+    layout.short_description = _('layout')
 
     def get_urls(self):
         '''Get urls accessible in admin interface
