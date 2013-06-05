@@ -2,9 +2,15 @@
 '''
 from django.conf.urls.defaults import patterns, url
 from . import views
+from django.conf import settings
+
+
+if settings.APPEND_SLASH:
+    reg = url(r'^(?P<slug>[0-9A-Za-z-_.//]+)/$', views.page_view, name='show_page')
+else:
+    reg = url(r'^(?P<slug>[0-9A-Za-z-_.//]+)$', views.page_view, name='show_page')
 
 urlpatterns = patterns('',
-    url('^(?P<slug>[\w\d\-]+)/$', views.page_view, name='show_page'),
-    url('^(?P<slug>[\w\d\-]+)$', views.page_view, name='show_page'),
+    reg,
     url('^$', views.page_view, name='show_page'),
 )
